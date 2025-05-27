@@ -1,7 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 from app import _app
-from app.routers.Northbound_apis import get_subscription_store
+from app.routers.Northbound_apis import in_memory_db
 from app.schemas.qos_models import AsSessionWithQosSubscription
 
 
@@ -11,7 +11,7 @@ from app.schemas.qos_models import AsSessionWithQosSubscription
 @pytest.fixture
 def client():
     # Clear the in-memory store before each test run
-    store = get_subscription_store()
+    store = in_memory_db()
     store.clear()
     return TestClient(_app)
 

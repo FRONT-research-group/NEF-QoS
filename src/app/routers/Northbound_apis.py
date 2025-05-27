@@ -1,9 +1,27 @@
-from fastapi import APIRouter, Depends, Response, status,HTTPException
+from fastapi import (
+    APIRouter,
+    Depends,
+    Response,
+    status,
+)
 from typing import List, Dict
-from app.schemas.qos_models import AsSessionWithQosSubscription,AsSessionWithQosSubscriptionWithSubscriptionId, AsSessionWithQosSubscriptionPatch,UserPlaneNotificationData
+
+from app.schemas.qos_models import (
+    AsSessionWithQosSubscription,
+    AsSessionWithQosSubscriptionWithSubscriptionId,
+    AsSessionWithQosSubscriptionPatch,
+    UserPlaneNotificationData
+)
 from app.utils.log import get_app_logger
-from app.services.Northbound_apis_svc import get_subscriptions_based_on_scsAsId, create_subscription_for_a_given_scsAsId, get_ResponseBody_by_scsAsId_and_subscriptionId, put_scsAsId_and_subscriptionId, patch_scsAsId_and_subscriptionId,delete_subscriptionId
-from app.services.db import get_subscription_store
+from app.services.Northbound_apis_svc import (
+    get_subscriptions_based_on_scsAsId,
+    create_subscription_for_a_given_scsAsId,
+    get_ResponseBody_by_scsAsId_and_subscriptionId,
+    put_scsAsId_and_subscriptionId,
+    patch_scsAsId_and_subscriptionId,
+    delete_subscriptionId
+)
+from app.services.db import in_memory_db
 
 
 logger = get_app_logger()
@@ -21,7 +39,7 @@ router = APIRouter()
 )
 async def get_subscriptions(
     scsAsId: str,
-    store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(get_subscription_store)) -> List[AsSessionWithQosSubscriptionWithSubscriptionId]:
+    store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(in_memory_db)) -> List[AsSessionWithQosSubscriptionWithSubscriptionId]:
     
     return await get_subscriptions_based_on_scsAsId(scsAsId, store)
 
@@ -37,7 +55,7 @@ async def create_subscription(
     scsAsId: str,
     initial_model: AsSessionWithQosSubscription,
     response: Response,
-    store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(get_subscription_store))-> AsSessionWithQosSubscriptionWithSubscriptionId:
+    store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(in_memory_db))-> AsSessionWithQosSubscriptionWithSubscriptionId:
 
     return await create_subscription_for_a_given_scsAsId(scsAsId, initial_model, response, store)
 
@@ -51,7 +69,7 @@ async def create_subscription(
 async def get_scsAsId_and_subscriptionId(
     scsAsId: str,
     subscriptionId: str,
-    store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(get_subscription_store)) -> AsSessionWithQosSubscription:
+    store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(in_memory_db)) -> AsSessionWithQosSubscription:
 
     return await get_ResponseBody_by_scsAsId_and_subscriptionId(scsAsId, subscriptionId, store)
 
@@ -66,7 +84,7 @@ async def update_with_PUT_scsAsId_and_subscriptionId(
     scsAsId: str,
     subscriptionId: str,
     initial_model: AsSessionWithQosSubscription,
-    store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(get_subscription_store)) -> AsSessionWithQosSubscription:
+    store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(in_memory_db)) -> AsSessionWithQosSubscription:
 
     return await put_scsAsId_and_subscriptionId(scsAsId, subscriptionId, initial_model, store)
 
@@ -82,7 +100,7 @@ async def update_with_PATCH_scsAsId_and_subscriptionId(
     scsAsId: str,
     subscriptionId: str,
     initial_model: AsSessionWithQosSubscriptionPatch,
-    store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(get_subscription_store)) -> AsSessionWithQosSubscription:
+    store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(in_memory_db)) -> AsSessionWithQosSubscription:
 
     return await patch_scsAsId_and_subscriptionId(scsAsId, subscriptionId, initial_model, store)
 
@@ -95,7 +113,7 @@ async def update_with_PATCH_scsAsId_and_subscriptionId(
 async def delete_with_subscriptionId(
     scsAsId: str,
     subscriptionId: str,
-    store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(get_subscription_store)
+    store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(in_memory_db)
 ) -> UserPlaneNotificationData:
 
     return await delete_subscriptionId(scsAsId, subscriptionId, store)

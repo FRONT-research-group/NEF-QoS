@@ -2,7 +2,7 @@ from fastapi import  Depends, HTTPException, Response
 from typing import List, Dict
 from app.schemas.qos_models import AsSessionWithQosSubscription, AsSessionWithQosSubscriptionWithSubscriptionId,AsSessionWithQosSubscriptionPatch
 from app.utils.log import get_app_logger
-from app.services.db import get_subscription_store
+from app.services.db import in_memory_db
 from uuid import uuid4
 from app.schemas.qos_models import UserPlaneNotificationData, UserPlaneEventReport, UserPlaneEvent
 
@@ -10,7 +10,7 @@ logger = get_app_logger()
 
 async def get_subscriptions_based_on_scsAsId(
     scsAsId: str,
-    store: Dict[str, List[AsSessionWithQosSubscription]] = Depends(get_subscription_store)) -> List[AsSessionWithQosSubscription]:
+    store: Dict[str, List[AsSessionWithQosSubscription]] = Depends(in_memory_db)) -> List[AsSessionWithQosSubscription]:
     
 
     if scsAsId not in store:
@@ -24,7 +24,7 @@ async def create_subscription_for_a_given_scsAsId(
     scsAsId: str,
     initial_model: AsSessionWithQosSubscription,
     response: Response,
-    store: Dict[str, List[AsSessionWithQosSubscription]] = Depends(get_subscription_store)):
+    store: Dict[str, List[AsSessionWithQosSubscription]] = Depends(in_memory_db)):
 
 
     
@@ -51,7 +51,7 @@ async def create_subscription_for_a_given_scsAsId(
 async def get_ResponseBody_by_scsAsId_and_subscriptionId(
     scsAsId: str,
     subscriptionId: str,
-    store: Dict[str, List[AsSessionWithQosSubscription]] = Depends(get_subscription_store)) -> AsSessionWithQosSubscription:
+    store: Dict[str, List[AsSessionWithQosSubscription]] = Depends(in_memory_db)) -> AsSessionWithQosSubscription:
 
     subscriptions = store.get(scsAsId, [])
     for sub in subscriptions:
@@ -65,7 +65,7 @@ async def put_scsAsId_and_subscriptionId(
     scsAsId: str,
     subscriptionId: str,
     initial_model: AsSessionWithQosSubscription,
-    store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(get_subscription_store)
+    store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(in_memory_db)
 ) -> AsSessionWithQosSubscription:
     
     subscriptions = store.get(scsAsId, [])
@@ -96,7 +96,7 @@ async def patch_scsAsId_and_subscriptionId(
     scsAsId: str,
     subscriptionId: str,
     initial_model: AsSessionWithQosSubscriptionPatch,
-    store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(get_subscription_store)
+    store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(in_memory_db)
 ) -> AsSessionWithQosSubscription:
 
     subscriptions = store.get(scsAsId, [])
@@ -120,14 +120,14 @@ async def patch_scsAsId_and_subscriptionId(
 async def delete_subscriptionId(
     scsAsId: str,
     subscriptionId: str,
-    store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(get_subscription_store)) -> UserPlaneNotificationData:
-
+    store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(in_memory_db)) -> UserPlaneNotificationData:
+    #FIXME its not correct with this transaction URL 
     subscriptions = store.get(scsAsId, [])
     for sub in subscriptions:
         if getattr(sub, "subscriptionId", None) == subscriptionId:
             subscriptions.remove(sub)
             logger.info(f"Deleted subscription {subscriptionId} for scsAsId={scsAsId}")
-            #FIXME 
+            
             return UserPlaneNotificationData(
                 transaction=f"https://example.com/callback/transaction/{subscriptionId}",
                 eventReports=[
