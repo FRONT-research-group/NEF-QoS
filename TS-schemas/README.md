@@ -1,0 +1,1 @@
+TS specifications for QoS 
