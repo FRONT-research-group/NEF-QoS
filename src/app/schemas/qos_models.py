@@ -25,7 +25,7 @@ class FlowInfo(BaseModel):
             return v
         for rule in v:
             if not FLOW_DESCRIPTION_REGEX.match(rule):
-                raise ValueError(f"Invalid Flow-Description format: {rule}")
+                raise ValueError(f"Invalid Flow-Description format: {rule}") 
             if any(bad in rule for bad in FORBIDDEN_KEYWORDS):
                 raise ValueError(f"Disallowed keyword or format in Flow-Description: {rule}")
         return v
@@ -47,10 +47,9 @@ class FlowInfo(BaseModel):
 class AsSessionWithQosSubscription(BaseModel):
     notificationDestination: HttpUrl
     supportedFeatures: Optional[str] = None
-    exterAppId: Optional[str] = None
     qosReference: Optional[str] = None
     ueIpv4Addr: Optional[IPvAnyAddress] = None
-    flowInfo: Optional[List] = None
+    flowInfo: Optional[List[FlowInfo]] = None
     requestTestNotification: Optional[bool] = True
 
     model_config = {
@@ -106,7 +105,7 @@ class AsSessionWithQosSubscriptionWithSubscriptionId(AsSessionWithQosSubscriptio
 class AsSessionWithQosSubscriptionPatch(BaseModel):
     """This Class is used to patch the existing AsSessionWithQosSubscription model"""
     notificationDestination: Optional[HttpUrl] = None
-    exterAppId: Optional[str] = None
+
     qosReference: Optional[str] = None
     flowInfo: Optional[List[FlowInfo]] = None
 
@@ -115,7 +114,6 @@ class AsSessionWithQosSubscriptionPatch(BaseModel):
             "examples": [
                 {
                     "notificationDestination": "https://example.com/callback",
-                    "exterAppId": "external-app-123",
                     "qosReference": "qos_42",
                     "flowInfo": [
                         {

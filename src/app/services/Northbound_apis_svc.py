@@ -90,8 +90,8 @@ async def put_scsAsId_and_subscriptionId(
             
             return AsSessionWithQosSubscription(**updated_model_data)
 
-    raise HTTPException(status_code=404, detail="Subscription not found")
-
+    raise HTTPException(status_code=404, detail="Subscription not found") 
+ 
 async def patch_scsAsId_and_subscriptionId(
     scsAsId: str,
     subscriptionId: str,
@@ -136,4 +136,4 @@ async def delete_subscriptionId(
             )
 
 
-    raise HTTPException(status_code=404, detail="Subscription not found")
+    raise HTTPException(status_code=404, detail="Subscription not found") 

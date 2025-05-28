@@ -11,8 +11,8 @@ def get_app_logger():
     Set up and return the application logger with log rotation.
     """
 
-    logger = logging.getLogger('exp_logger')
-    if not logger.hasHandlers():
+    logger = logging.getLogger('nef_logger')
+    if not logger.hasHandlers(): 
         logger.setLevel(logging.DEBUG)
 
         # Define log format
