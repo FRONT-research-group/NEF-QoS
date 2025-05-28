@@ -27,7 +27,7 @@
   The string represents a **hexadecimal bitmask**, where each character corresponds to 4 features (bits) in the API specification. The leftmost character represents the highest-numbered features, and the rightmost represents features 1–4. For example, "1F" indicates support for features 5–8 and 1–4. This mechanism ensures that the requester and the server only use features they both support, maintaining compatibility and flexibility across different 3GPP 5G APIs.
 
 * **3GPP Swagger Reference**:
-  - See the [TS29571_CommonData.yaml](./TS-schemas/TS29571_CommonData.yaml) file for the OpenAPI schema definition of the `SupportedFeatures` data type used in 3GPP APIs.
+  - See the [TS29571_CommonData.yaml](TS-schemas/TS29571_CommonData.yaml) file for the OpenAPI schema definition of the `SupportedFeatures` data type used in 3GPP APIs.
 
 ### `qosReference`
 
@@ -38,7 +38,7 @@
 
 
 * **3GPP Swagger Reference**:
-  - See the [TS29122_AsSessionWithQoS.yaml](./TS-schemas/TS29122_AsSessionWithQoS.yaml) file for the OpenAPI schema definition of `qosReference`.
+  - See the [TS29122_AsSessionWithQoS.yaml](TS-schemas/TS29122_AsSessionWithQoS.yaml) file for the OpenAPI schema definition of `qosReference`.
 
 
 ### `ueIpv4Addr`
@@ -66,7 +66,7 @@
   - See `flowInfo` data type for further schema details.
 
 * **3GPP Swagger Reference**:
-  - See the [TS29122_CommonData.yaml](./TS-schemas/TS29122_CommonData.yaml) file for the OpenAPI schema definition of `FlowInfo`.
+  - See the [TS29122_CommonData.yaml](TS-schemas/TS29122_CommonData.yaml) file for the OpenAPI schema definition of `FlowInfo`.
 
 * **3GPP Reference**:
   - [3GPP TS 29.122 - FlowInfo Data Type (Table 5.2.1.2.8-1)](https://www.etsi.org/deliver/etsi_ts/129100_129199/129122/17.12.00_60/ts_129122v171200p.pdf)
