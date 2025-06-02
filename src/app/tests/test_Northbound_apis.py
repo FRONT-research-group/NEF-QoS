@@ -98,18 +98,27 @@ def test_delete_subscription(client, example_subscription):
         "/3gpp-as-session-with-qos/v1/AS1586/subscriptions",
         json=example_subscription
     )
+    assert post_resp.status_code == 201
     sub_id = post_resp.json()["subscriptionId"]
+
     del_resp = client.delete(f"/3gpp-as-session-with-qos/v1/AS1586/subscriptions/{sub_id}")
-    assert del_resp.status_code == 200
+    assert del_resp.status_code == 200 or del_resp.status_code == 204
+    
     del_data = del_resp.json()
-    assert "transaction" in del_data
-    # Confirm deletion
+    assert "detail" in del_data
+    assert f"Subscription {sub_id} deleted" in del_data["detail"]
+
     get_after_del = client.get(f"/3gpp-as-session-with-qos/v1/AS1586/subscriptions/{sub_id}")
     assert get_after_del.status_code == 404
+    error_data = get_after_del.json()
+    assert error_data["status"] == 404
+    assert "Not Found" in error_data["title"]
+    assert f"Subscription '{sub_id}'" in error_data["detail"]
+
 
 def test_get_subscriptions_missing_id(client):
     """Test the GET subscriptions endpoint with a missing SCS/AS ID"""
     response = client.get("/3gpp-as-session-with-qos/v1/as999/subscriptions")
     assert response.status_code == 404
     data = response.json()
-    assert data.get("detail") == "SCS/AS 'as999' not found"
+    assert "SCS/AS 'as999' not found" in data.get("detail")

@@ -151,7 +151,7 @@ class UserPlaneNotificationData(BaseModel):
         "json_schema_extra": {
             "examples": [
                 {
-                    "transaction": "https://example.com/callback/transaction-123",
+                    "transaction": "https://example.com/callback/transaction/uuid-12345",
                     "eventReports": [
                         {
                             "event": UserPlaneEvent.SESSION_TERMINATION
