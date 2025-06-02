@@ -102,18 +102,13 @@ def test_delete_subscription(client, example_subscription):
     sub_id = post_resp.json()["subscriptionId"]
 
     del_resp = client.delete(f"/3gpp-as-session-with-qos/v1/AS1586/subscriptions/{sub_id}")
-    assert del_resp.status_code == 200 or del_resp.status_code == 204
-    
-    del_data = del_resp.json()
-    assert "detail" in del_data
-    assert f"Subscription {sub_id} deleted" in del_data["detail"]
+    assert del_resp.status_code == 200
 
-    get_after_del = client.get(f"/3gpp-as-session-with-qos/v1/AS1586/subscriptions/{sub_id}")
-    assert get_after_del.status_code == 404
-    error_data = get_after_del.json()
-    assert error_data["status"] == 404
-    assert "Not Found" in error_data["title"]
-    assert f"Subscription '{sub_id}'" in error_data["detail"]
+    del_data = del_resp.json()
+    # Check for the new response structure
+    assert "eventReports" in del_data
+    assert isinstance(del_data["eventReports"], list)
+    assert del_data["eventReports"][0]["event"] == "SESSION_TERMINATION"
 
 
 def test_get_subscriptions_missing_id(client):

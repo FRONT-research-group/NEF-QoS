@@ -39,7 +39,7 @@ router = APIRouter()
     response_model=List[AsSessionWithQosSubscriptionWithSubscriptionId],
     description="Read all active subscriptions for the SCS/AS"
 )
-async def get_subscriptions(
+async def get_all_subsciptions_based_on_SCSAS(
     request: Request,
     scsAsId: str,
     store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(in_memory_db)) -> List[AsSessionWithQosSubscriptionWithSubscriptionId]:
@@ -49,7 +49,7 @@ async def get_subscriptions(
 
 @router.post(
     "/{scsAsId}/subscriptions",
-    tags=["AsSessionWithQoS API Subscription level POST Operation"],
+    tags=["AsSessionWithQoS API Subscription level CRUD Operations"],
     status_code=status.HTTP_201_CREATED,
     response_model=AsSessionWithQosSubscriptionWithSubscriptionId,
     description="Creates a new subscription resource"
@@ -65,12 +65,12 @@ async def create_subscription(
 
 @router.get(
     "/{scsAsId}/subscriptions/{subscriptionId}",
-    tags=["AsSessionWithQoS API Subscription level GET Operation"],
+    tags=["AsSessionWithQoS API Subscription level CRUD Operations"],
     status_code=status.HTTP_200_OK,
     response_model=AsSessionWithQosSubscription,
     description="read an active subscriptions for the SCS/AS and the subscription Id"
 )
-async def get_scsAsId_and_subscriptionId(
+async def get_with_scsAsId_and_subscriptionId(
     request: Request,
     scsAsId: str,
     subscriptionId: str,
@@ -80,7 +80,7 @@ async def get_scsAsId_and_subscriptionId(
 
 @router.put(
     "/{scsAsId}/subscriptions/{subscriptionId}",
-    tags=["AsSessionWithQoS API subscription level PUT Operation"],
+    tags=["AsSessionWithQoS API Subscription level CRUD Operations"],
     status_code=status.HTTP_200_OK,
     response_model=AsSessionWithQosSubscription,
     description="Updates/replaces an existing subscription resource"
@@ -97,7 +97,7 @@ async def update_with_PUT_scsAsId_and_subscriptionId(
 
 @router.patch(
     "/{scsAsId}/subscriptions/{subscriptionId}",
-    tags=["AsSessionWithQoS API subscription level PATCH Operation"],
+    tags=["AsSessionWithQoS API Subscription level CRUD Operations"],
     status_code=status.HTTP_200_OK,
     response_model=AsSessionWithQosSubscription,
     description="Updates/replaces an existing subscription resource"
@@ -113,11 +113,12 @@ async def update_with_PATCH_scsAsId_and_subscriptionId(
 
 @router.delete(
     "/{scsAsId}/subscriptions/{subscriptionId}",
-    tags=["AsSessionWithQoS API Subscription level DELETE Operation"],
+    tags=["AsSessionWithQoS API Subscription level CRUD Operations"],
     status_code=status.HTTP_200_OK,
+    response_model=UserPlaneNotificationData,
     description="Deletes an already existing subscription"
 )
-async def delete_with_subscriptionId(
+async def delete_with_scsAsId_and_subscriptionId(
     request: Request,
     scsAsId: str,
     subscriptionId: str,

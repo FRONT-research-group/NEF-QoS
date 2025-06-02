@@ -1,6 +1,10 @@
 from fastapi import  Depends, Response, Request
 from typing import List, Dict
-from app.schemas.qos_models import AsSessionWithQosSubscription, AsSessionWithQosSubscriptionWithSubscriptionId,AsSessionWithQosSubscriptionPatch, UserPlaneNotificationData, UserPlaneEventReport
+from app.schemas.qos_models import (AsSessionWithQosSubscription, 
+                                    AsSessionWithQosSubscriptionWithSubscriptionId,
+                                    AsSessionWithQosSubscriptionPatch, 
+                                    UserPlaneNotificationData, 
+                                    UserPlaneEventReport)
 from app.utils.log import get_app_logger
 from app.services.db import in_memory_db
 from uuid import uuid4

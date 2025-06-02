@@ -11,6 +11,8 @@ def create_problem_details(
     invalid_params: Optional[List[Dict[str, str]]] = None,
     retry_after: Optional[str] = None
 ) -> JSONResponse:
+    """Specific error handlers TS 29.122 5.2.6 mandatory codes"""
+    
     problem = {
         #FIXME fix the URL to point to the correct error documentation
         "type": f"https://example.com/errors/{status_code}",
@@ -27,8 +29,6 @@ def create_problem_details(
         problem["retryAfter"] = retry_after
     return JSONResponse(status_code=status_code, content=problem, media_type="application/problem+json")
 
-# Specific error handlers for all TS 29.122 5.2.6 mandatory codes
-#TODO Maybe i need to implement the errors in each request in northbound_apis.py and northbound_apis_svc.py
 
 def error_400(request: Request, detail: str, invalid_params: Optional[List[Dict[str, str]]] = None):
     return create_problem_details(400, "Bad Request", detail, str(request.url), invalid_params)
