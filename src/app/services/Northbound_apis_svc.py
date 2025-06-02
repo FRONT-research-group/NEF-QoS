@@ -5,6 +5,7 @@ from app.utils.log import get_app_logger
 from app.services.db import in_memory_db
 from uuid import uuid4
 from app.schemas.qos_models import UserPlaneNotificationData, UserPlaneEventReport, UserPlaneEvent
+from app.helpers.callback import send_callback_to_as
 
 logger = get_app_logger()
 
@@ -26,24 +27,22 @@ async def create_subscription_for_a_given_scsAsId(
     response: Response,
     store: Dict[str, List[AsSessionWithQosSubscription]] = Depends(in_memory_db)):
 
-
-    
     if scsAsId not in store:
         store[scsAsId] = []
 
     subscription_id = str(uuid4())
-
     # add the subscriptionId to the model 
     full_subscription = AsSessionWithQosSubscriptionWithSubscriptionId(
         subscriptionId=subscription_id,
         **initial_model.model_dump()
     )
-
     store[scsAsId].append(full_subscription)
 
     response.headers["Location"] = f"/3gpp-as-session-with-qos/v1/{scsAsId}/subscriptions/{subscription_id}"
 
     logger.info(f"Created subscription {subscription_id} for scsAsId={scsAsId}")
+
+    await send_callback_to_as(full_subscription.notificationDestination, subscription_id)
 
     return full_subscription
 
