@@ -3,4 +3,4 @@
 
 import os
 
-NEF_BASE_URL = "http://localhost:8001"
+NEF_BASE_URL =os.getenv("NEF_BASE_URL", "http://localhost:8001")

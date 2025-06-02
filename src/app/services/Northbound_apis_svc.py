@@ -68,12 +68,16 @@ async def get_ResponseBody_by_scsAsId_and_subscriptionId(
     subscriptionId: str,
     store: Dict[str, List[AsSessionWithQosSubscription]] = Depends(in_memory_db)) -> AsSessionWithQosSubscription:
 
-    subscriptions = store.get(scsAsId, [])
-    for sub in subscriptions:
-        if getattr(sub, "subscriptionId", None) == subscriptionId:
-            return sub
-    
-    return error_404(request, detail=f"Subscription '{subscriptionId}' for SCS/AS '{scsAsId}' not found")
+    try:
+        subscriptions = store.get(scsAsId, [])
+        for sub in subscriptions:
+            if getattr(sub, "subscriptionId", None) == subscriptionId:
+                return sub
+
+        return error_404(request, detail=f"Subscription '{subscriptionId}' for SCS/AS '{scsAsId}' not found")
+    except Exception as e:
+        logger.error(f"Error while fetching subscription {subscriptionId} for {scsAsId=}: {e}")
+        return error_500(request, f"Unexpected error: {str(e)}")
 
 
 
@@ -87,32 +91,37 @@ async def put_scsAsId_and_subscriptionId(
     
     subscriptions = store.get(scsAsId, [])
     
-    for i, sub in enumerate(subscriptions):
-        if getattr(sub, "subscriptionId", None) == subscriptionId:
-            original_ipv4 = sub.ueIpv4Addr
-            
-            if initial_model.ueIpv4Addr is not None and initial_model.ueIpv4Addr != original_ipv4:
-                return error_400(
-                    request,
-                    detail=f"Cannot change ueIpv4Addr from {original_ipv4} to {initial_model.ueIpv4Addr}",
-                    invalid_params=[{"name": "ueIpv4Addr", "reason": "Changing ueIpv4Addr is not allowed"}]
-                )
-            
-            updated_model_data = initial_model.model_dump()
-            updated_model_data['ueIpv4Addr'] = original_ipv4
-            
-            subscriptions[i] = AsSessionWithQosSubscriptionWithSubscriptionId(
-                **updated_model_data,
-                subscriptionId=subscriptionId
-            )
-            
-            return AsSessionWithQosSubscription(**updated_model_data)
+    try:
+        for i, sub in enumerate(subscriptions):
+            if getattr(sub, "subscriptionId", None) == subscriptionId:
+                original_ipv4 = sub.ueIpv4Addr
 
-    return error_404(
-        request,
-        detail=f"Subscription '{subscriptionId}' for SCS/AS '{scsAsId}' not found"
-    )
- 
+                if initial_model.ueIpv4Addr is not None and initial_model.ueIpv4Addr != original_ipv4:
+                    return error_400(
+                        request,
+                        detail=f"Cannot change ueIpv4Addr from {original_ipv4} to {initial_model.ueIpv4Addr}",
+                        invalid_params=[{"name": "ueIpv4Addr", "reason": "Changing ueIpv4Addr is not allowed"}]
+                    )
+
+                updated_model_data = initial_model.model_dump()
+                updated_model_data['ueIpv4Addr'] = original_ipv4
+
+                subscriptions[i] = AsSessionWithQosSubscriptionWithSubscriptionId(
+                    **updated_model_data,
+                    subscriptionId=subscriptionId
+                )
+
+                return AsSessionWithQosSubscription(**updated_model_data)
+
+        return error_404(
+            request,
+            detail=f"Subscription '{subscriptionId}' for SCS/AS '{scsAsId}' not found"
+        )
+    except Exception as e:
+        logger.error(f"Error while updating subscription {subscriptionId} for {scsAsId=}: {e}")
+        return error_500(request, f"Unexpected error: {str(e)}")
+    
+
 async def patch_scsAsId_and_subscriptionId(
     request: Request,
     scsAsId: str,
@@ -122,24 +131,27 @@ async def patch_scsAsId_and_subscriptionId(
 ) -> AsSessionWithQosSubscription:
 
     subscriptions = store.get(scsAsId, [])
-    
-    for i, sub in enumerate(subscriptions):
-        if getattr(sub, "subscriptionId", None) == subscriptionId:
-            updated_data = sub.model_dump(exclude={'subscriptionId'})
-            patch_data = initial_model.model_dump(exclude_unset=True)
-            updated_data.update(patch_data)
-            
-            subscriptions[i] = AsSessionWithQosSubscriptionWithSubscriptionId(
-                **updated_data,
-                subscriptionId=subscriptionId
-            )
-            
-            return AsSessionWithQosSubscription(**updated_data)
-    
-    return error_404(
-        request,
-        detail=f"Subscription '{subscriptionId}' for SCS/AS '{scsAsId}' not found"
-    )
+    try:
+        for i, sub in enumerate(subscriptions):
+            if getattr(sub, "subscriptionId", None) == subscriptionId:
+                updated_data = sub.model_dump(exclude={'subscriptionId'})
+                patch_data = initial_model.model_dump(exclude_unset=True)
+                updated_data.update(patch_data)
+                
+                subscriptions[i] = AsSessionWithQosSubscriptionWithSubscriptionId(
+                    **updated_data,
+                    subscriptionId=subscriptionId
+                )
+                
+                return AsSessionWithQosSubscription(**updated_data)
+        
+        return error_404(
+            request,
+            detail=f"Subscription '{subscriptionId}' for SCS/AS '{scsAsId}' not found"
+        )
+    except Exception as e:
+        logger.error(f"Error while patching subscription {subscriptionId} for {scsAsId=}: {e}")
+        return error_500(request, f"Unexpected error: {str(e)}")
 
 async def delete_subscriptionId(
     request: Request,
@@ -163,8 +175,7 @@ async def delete_subscriptionId(
                 ]
             )
             try:
-                await send_callback_to_as(notification_destination=notification_destination,
-                                            event=UserPlaneEvent.SESSION_TERMINATION)
+                await send_callback_to_as(notification_destination, event=UserPlaneEvent.SESSION_TERMINATION)
             except Exception as e:
                 logger.error(f"Callback failed: {e}")
 
