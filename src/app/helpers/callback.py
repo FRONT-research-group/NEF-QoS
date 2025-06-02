@@ -2,14 +2,14 @@ import httpx
 from app.utils.log import get_app_logger
 from uuid import uuid4
 from app.schemas.qos_models import UserPlaneNotificationData, UserPlaneEvent, UserPlaneEventReport
-
+from app.utils.app_config import NEF_BASE_URL
 
 
 logger = get_app_logger()
 
 
 async def send_callback_to_as(notification_destination: str, event: UserPlaneEvent):
-    transaction_url = f"{notification_destination}/transactions/{uuid4()}"
+    transaction_url = f"{NEF_BASE_URL}/transactions/{uuid4()}"
     payload = UserPlaneNotificationData(
         transaction=transaction_url,
         eventReports=[

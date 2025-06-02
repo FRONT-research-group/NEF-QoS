@@ -3,7 +3,4 @@
 
 import os
 
-
-MONGO_URL = os.environ.get("MONGO_URL", "")
-PCF_URL = os.environ.get("PCF_URL", "")
-PCF_PORT = os.environ.get("PCF_PORT", "")
+NEF_BASE_URL = "http://localhost:8001"

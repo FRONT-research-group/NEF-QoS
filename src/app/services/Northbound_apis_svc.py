@@ -1,12 +1,13 @@
 from fastapi import  Depends, Response, Request
 from typing import List, Dict
-from app.schemas.qos_models import AsSessionWithQosSubscription, AsSessionWithQosSubscriptionWithSubscriptionId,AsSessionWithQosSubscriptionPatch, UserPlaneNotificationData
+from app.schemas.qos_models import AsSessionWithQosSubscription, AsSessionWithQosSubscriptionWithSubscriptionId,AsSessionWithQosSubscriptionPatch, UserPlaneNotificationData, UserPlaneEventReport
 from app.utils.log import get_app_logger
 from app.services.db import in_memory_db
 from uuid import uuid4
 from app.schemas.qos_models import UserPlaneEvent
 from app.helpers.callback import send_callback_to_as
 from app.helpers.problem_details import error_400, error_404, error_500
+from app.utils.app_config import NEF_BASE_URL
 
 logger = get_app_logger()
 
@@ -144,8 +145,7 @@ async def delete_subscriptionId(
     request: Request,
     scsAsId: str,
     subscriptionId: str,
-    store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(in_memory_db)):
-
+    store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(in_memory_db)) -> UserPlaneNotificationData:
 
     subscriptions = store.get(scsAsId, [])
     for sub in subscriptions:
@@ -154,11 +154,21 @@ async def delete_subscriptionId(
             logger.info(f"Deleted subscription {subscriptionId} for scsAsId={scsAsId}")
 
             notification_destination = str(sub.notificationDestination)
-
-            await send_callback_to_as(notification_destination=notification_destination,
-                                      event=UserPlaneEvent.SESSION_TERMINATION)
             
-            return {"detail": f"Subscription {subscriptionId} deleted"}
+            transaction_url = f"{NEF_BASE_URL}/transactions/{uuid4()}"
+            payload = UserPlaneNotificationData(
+                transaction=transaction_url,
+                eventReports=[
+                    UserPlaneEventReport(event=UserPlaneEvent.SESSION_TERMINATION)
+                ]
+            )
+            try:
+                await send_callback_to_as(notification_destination=notification_destination,
+                                            event=UserPlaneEvent.SESSION_TERMINATION)
+            except Exception as e:
+                logger.error(f"Callback failed: {e}")
+
+            return payload
         
     return error_404(
         request,
