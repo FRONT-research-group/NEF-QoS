@@ -50,7 +50,6 @@ class AsSessionWithQosSubscription(BaseModel):
     qosReference: Optional[str] = None
     ueIpv4Addr: Optional[IPvAnyAddress] = None
     flowInfo: Optional[List[FlowInfo]] = None
-    requestTestNotification: Optional[bool] = True
 
     model_config = {
         "json_schema_extra": {
@@ -69,7 +68,6 @@ class AsSessionWithQosSubscription(BaseModel):
                             ]
                         }
                     ],
-                    "requestTestNotification": True
                 }
             ]
         }
@@ -95,9 +93,7 @@ class AsSessionWithQosSubscriptionWithSubscriptionId(AsSessionWithQosSubscriptio
                                 "permit out ip from any to 10.45.0.4"
                             ]
                         }
-                    ],
-                    "requestTestNotification": True
-                }
+                    ],                }
             ]
         }
     }
@@ -151,7 +147,7 @@ class UserPlaneNotificationData(BaseModel):
         "json_schema_extra": {
             "examples": [
                 {
-                    "transaction": "https://example.com/callback/transaction/uuid-12345",
+                    "transaction": "http://localhost:8001/3gpp-as-session-with-qos/v1/example/subscriptions/4e27a197-075f-4cab-8750-23cbbc316f8c",
                     "eventReports": [
                         {
                             "event": UserPlaneEvent.SESSION_TERMINATION

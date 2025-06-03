@@ -37,7 +37,12 @@ async def create_subscription_for_a_given_scsAsId(
     scsAsId: str,
     initial_model: AsSessionWithQosSubscription,
     response: Response,
-    store: Dict[str, List[AsSessionWithQosSubscription]] = Depends(in_memory_db)):
+    store: Dict[str, List[AsSessionWithQosSubscription]] = Depends(in_memory_db))-> AsSessionWithQosSubscriptionWithSubscriptionId:
+
+
+    subscription_id = None
+    notification_destination = None
+    success = False  # Flag to track success
 
     try:
         if not initial_model:
@@ -58,13 +63,24 @@ async def create_subscription_for_a_given_scsAsId(
         
         notification_destination = str(full_subscription.notificationDestination)
 
-        await send_callback_to_as(notification_destination=notification_destination,
-                                    event=UserPlaneEvent.SUCCESSFUL_RESOURCES_ALLOCATION)
+        await send_callback_to_as(notification_destination, scsAsId, subscription_id, event=UserPlaneEvent.SUCCESSFUL_RESOURCES_ALLOCATION)
+        
+        success = True  
         return full_subscription
-    
+
     except Exception as e:
-        logger.error(f"Error while creating subscription for {scsAsId=}: {e}")
-        return error_500(request, f"Unexpected error: {str(e)}")
+        logger.error(f"Error while creating subscription for scsAsId={scsAsId}: {e}")
+        error_message = str(e)
+
+    finally:
+        if not success and notification_destination and subscription_id:
+            try:
+                await send_callback_to_as(notification_destination, scsAsId, subscription_id, event=UserPlaneEvent.FAILED_RESOURCES_ALLOCATION)
+            except Exception as callback_error:
+                logger.error(f"Callback failed during FAILED_RESOURCES_ALLOCATION: {callback_error}")
+
+    return error_500(request, f"Unexpected error: {error_message if 'error_message' in locals() else 'Unknown error'}")
+
 
 async def get_ResponseBody_by_scsAsId_and_subscriptionId(
     request: Request,
@@ -171,7 +187,8 @@ async def delete_subscriptionId(
 
             notification_destination = str(sub.notificationDestination)
             
-            transaction_url = f"{NEF_BASE_URL}/transactions/{uuid4()}"
+            transaction_url = f"{NEF_BASE_URL}/3gpp-as-session-with-qos/v1/{scsAsId}/subscriptions/{subscriptionId}"
+
             payload = UserPlaneNotificationData(
                 transaction=transaction_url,
                 eventReports=[
@@ -179,7 +196,7 @@ async def delete_subscriptionId(
                 ]
             )
             try:
-                await send_callback_to_as(notification_destination, event=UserPlaneEvent.SESSION_TERMINATION)
+                await send_callback_to_as(notification_destination, scsAsId, subscriptionId, event=UserPlaneEvent.SESSION_TERMINATION)
             except Exception as e:
                 logger.error(f"Callback failed: {e}")
 

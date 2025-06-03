@@ -8,8 +8,10 @@ from app.utils.app_config import NEF_BASE_URL
 logger = get_app_logger()
 
 
-async def send_callback_to_as(notification_destination: str, event: UserPlaneEvent):
-    transaction_url = f"{NEF_BASE_URL}/transactions/{uuid4()}"
+async def send_callback_to_as(notification_destination: str, scsAsId, subscriptionId, event: UserPlaneEvent):
+    """Callback back to AS with bearer event information."""
+    
+    transaction_url = f"{NEF_BASE_URL}/3gpp-as-session-with-qos/v1/{scsAsId}/subscriptions/{subscriptionId}"
     payload = UserPlaneNotificationData(
         transaction=transaction_url,
         eventReports=[

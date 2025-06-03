@@ -11,11 +11,9 @@ def create_problem_details(
     invalid_params: Optional[List[Dict[str, str]]] = None,
     retry_after: Optional[str] = None
 ) -> JSONResponse:
-    """Specific error handlers TS 29.122 5.2.6 mandatory codes"""
+    """Specific error handlers TS 29.122 clause 5.2.6 mandatory codes"""
     
     problem = {
-        #FIXME fix the URL to point to the correct error documentation
-        "type": f"https://example.com/errors/{status_code}",
         "title": title,
         "status": status_code
     }
