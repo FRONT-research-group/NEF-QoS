@@ -3,16 +3,12 @@ from app.schemas.qos_models import (
     MediaComponent, MediaSubComponent, FlowStatus, MediaType
 )
 from app.utils.log import get_app_logger
+from app.utils.app_config import QOS_MAPPING
 from app.services.db import map_subId_with_appsessionId
 
 logger = get_app_logger()
 
-QOS_MAPPING = {
-    "qod_1": {"marBwDl": "120 Mbps", "marBwUl": "120 Mbps", "mediaType": "CONTROL"},
-    "qod_2": {"marBwDl": "20 Mbps", "marBwUl": "20 Mbps", "mediaType": "AUDIO"},
-    "qod_3": {"marBwDl": "40 Mbps", "marBwUl": "40 Mbps", "mediaType": "VIDEO"},
-    "qod_4": {"marBwDl": "80 Mbps", "marBwUl": "80 Mbps", "mediaType": "VIDEO"}
-}
+
 
 
 def create_app_session_context_to_PCF(initial_model: AsSessionWithQosSubscription):
@@ -72,3 +68,4 @@ def create_app_session_context_to_PCF(initial_model: AsSessionWithQosSubscriptio
 
 # Example function to extract appSessionId from a Location header
 
+#TODO add delete function to delete the appSessionId from the PCF
