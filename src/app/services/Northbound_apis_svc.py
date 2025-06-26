@@ -8,10 +8,13 @@ from app.schemas.qos_models import (AsSessionWithQosSubscription,
 from app.utils.log import get_app_logger
 from app.services.db import in_memory_db
 from uuid import uuid4
+from app.services.db import delete_subId_with_appsessionId
 from app.schemas.qos_models import UserPlaneEvent
 from app.helpers.callback import send_callback_to_as
 from app.helpers.problem_details import error_400, error_404, error_500
 from app.utils.app_config import NEF_BASE_URL
+
+from app.services.Southbound_apis_svc import create_app_session_context_to_PCF
 
 logger = get_app_logger()
 
@@ -42,7 +45,7 @@ async def create_subscription_for_a_given_scsAsId(
 
     subscription_id = None
     notification_destination = None
-    success = False  # Flag to track success
+    success = False
 
     try:
         if not initial_model:
@@ -65,6 +68,9 @@ async def create_subscription_for_a_given_scsAsId(
 
         await send_callback_to_as(notification_destination, scsAsId, subscription_id, event=UserPlaneEvent.SUCCESSFUL_RESOURCES_ALLOCATION)
         
+        #Send request to PCF to create AppSessionContext
+        create_app_session_context_to_PCF(initial_model)
+
         success = True  
         return full_subscription
 
@@ -184,6 +190,9 @@ async def delete_subscriptionId(
         if getattr(sub, "subscriptionId", None) == subscriptionId:
             subscriptions.remove(sub)
             logger.info(f"Deleted subscription {subscriptionId} for scsAsId={scsAsId}")
+
+            # Remove the mapping of subscriptionId to appSessionId
+            delete_subId_with_appsessionId(subscriptionId)
 
             notification_destination = str(sub.notificationDestination)
             

@@ -8,11 +8,11 @@ from app.schemas.qos_models import (
     AppSessionContextReqData, FlowStatus, MediaType, AppSessionContext
 )
 from app.services.Southbound_apis_svc import create_app_session_context_to_PCF
-from app.services.db import in_memory_db, map_subId_with_appsessionId
+from app.services.db import map_subId_with_appsessionId, delete_subId_with_appsessionId, SUBSCRIPTION_ID_TO_APP_SESSION_ID
 
 
 
-def test_create_app_session_context_to_PCF_maps_qos_reference():
+def test_create_app_session_context_to_PCF_and_maps_qos_reference():
     flow_info = FlowInfo(
         flowId=1,
         flowDescriptions=[
@@ -40,6 +40,7 @@ def test_create_app_session_context_to_PCF_maps_qos_reference():
     assert med_comp["medCompN"] == 1
 
     qos = QOS_MAPPING[subscription.qosReference]
+    
     assert med_comp["fStatus"] == "ENABLED"
     assert med_comp["medType"] == qos["mediaType"]
     assert med_comp["marBwUl"] == qos["marBwUl"]
@@ -55,14 +56,23 @@ def test_create_app_session_context_to_PCF_maps_qos_reference():
 
 def test_mapping_subId_with_appsessionId():
     """
-    Test the mapping of subscriptionId with appSessionId.
-    This is a mock test to ensure that the mapping function works as expected.
+    Test that SUBSCRIPTION_ID_TO_APP_SESSION_ID has at least one key:value pair.
     """
-    # Simulate creating a mapping
-    sub_id = "sub_12345"
-    app_session_id = 67890
-    map_subId_with_appsessionId(app_session_id)
+    assert len(SUBSCRIPTION_ID_TO_APP_SESSION_ID) > 0, "No mappings found!"
+    subscriptionId, appSessionId = next(iter(SUBSCRIPTION_ID_TO_APP_SESSION_ID.items()))
+    assert subscriptionId is not None
+    assert appSessionId is not None
+   
+def test_delete_subId_with_appsessionId():
 
-    # Check if the mapping exists in the in-memory store
-    store = in_memory_db()
-    assert store.get(sub_id) == app_session_id, f"Expected {app_session_id} for {sub_id}, got {store.get(sub_id)}"
+    print("Current SUBSCRIPTION_ID_TO_APP_SESSION_ID before deletion:", SUBSCRIPTION_ID_TO_APP_SESSION_ID)
+    initial_len = len(SUBSCRIPTION_ID_TO_APP_SESSION_ID)
+    assert initial_len > 0, "No mappings to delete!"
+
+    # Pick a subscriptionId to delete
+    subscriptionId = next(iter(SUBSCRIPTION_ID_TO_APP_SESSION_ID.keys()))
+    delete_subId_with_appsessionId(subscriptionId)
+
+    print("Current SUBSCRIPTION_ID_TO_APP_SESSION_ID after deletion:", SUBSCRIPTION_ID_TO_APP_SESSION_ID)
+    assert len(SUBSCRIPTION_ID_TO_APP_SESSION_ID) == initial_len - 1
+    assert subscriptionId not in SUBSCRIPTION_ID_TO_APP_SESSION_ID

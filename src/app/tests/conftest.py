@@ -2,7 +2,7 @@
 import pytest
 from fastapi.testclient import TestClient
 from app import _app
-from app.routers.Northbound_apis import in_memory_db
+from app.services.db import in_memory_db, map_subId_with_appsessionId
 
 @pytest.fixture
 def client():

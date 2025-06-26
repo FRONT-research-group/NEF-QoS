@@ -72,6 +72,7 @@ class AsSessionWithQosSubscription(BaseModel):
             ]
         }
     }
+        
 class AsSessionWithQosSubscriptionWithSubscriptionId(AsSessionWithQosSubscription):
     """This Class is used to add the subscriptionId to the existing AsSessionWithQosSubscription model"""
     subscriptionId: str
@@ -159,60 +160,41 @@ class UserPlaneNotificationData(BaseModel):
     }
 
 
-#post request to {apiRoot}/npcf-policyauthorization/v1/app-sessions
-#request body: DATA TYPE -> AppSessionContext 
-#  Attribute ascReqData -> Data Type AppSessionContextReqData -> 
-
+##### FROM 3GPP TS_129514 NEF-PCF models #####
 
 class FlowUsage(str, Enum):
     """Enumeration for flow usage as per 3GPP TS 29.214 Table 5.6.3.14-1"""
     NO_INFO = "NO_INFO"         # No information about the usage of the IP flow is provided (default).
-    RTCP = "RTCP"               # IP flow is used to transport RTCP.
-    AF_SIGNALLING = "AF_SIGNALLING"  # IP flow is used to transport AF Signalling Protocols (e.g. SIP/SDP).
+    # RTCP = "RTCP"               # IP flow is used to transport RTCP.
+    # AF_SIGNALLING = "AF_SIGNALLING"  # IP flow is used to transport AF Signalling Protocols (e.g. SIP/SDP).
 
-class BitRate(str):
-    """String representing a bit rate, e.g., '100 Mbps'."""
-    BITRATE_REGEX = re.compile(r'^\d+(\.\d+)? (bps|Kbps|Mbps|Gbps|Tbps)$')
-
-    @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
-
-    @classmethod
-    def validate(cls, v):
-        if not isinstance(v, str):
-            raise TypeError('BitRate must be a string')
-        if not cls.BITRATE_REGEX.match(v):
-            raise ValueError(
-                "BitRate must match pattern: '^\\d+(\\.\\d+)? (bps|Kbps|Mbps|Gbps|Tbps)$'"
-            )
-        return v
+# BitRate is now a type alias for str, validation is handled in MediaComponent
+BitRate = str
 
 class MediaType(str, Enum):
     """Media types as per 3GPP TS 29.214 5.6.3.4"""
     AUDIO = "AUDIO"         # The type of media is audio.
     VIDEO = "VIDEO"         # The type of media is video.
-    DATA = "DATA"           # The type of media is data.
-    APPLICATION = "APPLICATION" # The type of media is application data.
+    # DATA = "DATA"           # The type of media is data.
+    # APPLICATION = "APPLICATION" # The type of media is application data.
     CONTROL = "CONTROL"     # The type of media is control.
-    TEXT = "TEXT"           # The type of media is text.
-    MESSAGE = "MESSAGE"     # The type of media is message.
-    OTHER = "OTHER"         # Other type of media.
+    # TEXT = "TEXT"           # The type of media is text.
+    # MESSAGE = "MESSAGE"     # The type of media is message.
+    # OTHER = "OTHER"         # Other type of media.
 
-# class FlowDescription(FlowInfo):
-#     flowDescriptions = List[str]  # Contains the filter for the service data flow, as per 3GPP TS 29.214 clause 5.3.8. example:  "flowDescriptions": ["permit in ip from 10.45.1.4 to any", "permit out ip from any to 10.45.0.4"
 
 class MediaSubComponent(BaseModel):
     fNum: int
-    fDescs: List[str]  # Plain strings instead of FlowDescription
+    fDescs: List[str]
     flowUsage: FlowUsage
 
     @classmethod
-    def from_flow_info(cls, flow_info: FlowInfo, flow_usage: FlowUsage = FlowUsage.NO_INFO) -> "MediaSubComponent":
+    def from_flow_info(cls, flow_info: FlowInfo) -> "MediaSubComponent":
+        """mapping the FlowInfo{flowId and flowDescription} to MediaSubComponent{fnum, fDescs}"""
         return cls(
             fNum=flow_info.flowId,
             fDescs=flow_info.flowDescriptions or [],
-            flowUsage=flow_usage
+            flowUsage=FlowUsage.NO_INFO  # Default value
         )
 
 
@@ -233,13 +215,76 @@ class MediaComponent(BaseModel):
     marBwUl: BitRate
     marBwDl: BitRate
 
+#TODO check if bitrate is like 90000000 or 90 Mbps in open5gs
+
+    @field_validator('marBwUl', 'marBwDl')
+    @classmethod
+    def validate_bitrate(cls, v):
+        BITRATE_REGEX = re.compile(r'^\d+(\.\d+)? (bps|Kbps|Mbps|Gbps|Tbps)$')
+        if not isinstance(v, str):
+            raise TypeError('BitRate must be a string')
+        if not BITRATE_REGEX.match(v):
+            raise ValueError(
+                "BitRate must match pattern: '^\\d+(\\.\\d+)? (bps|Kbps|Mbps|Gbps|Tbps)$'"
+            )
+        return v
+
 class AppSessionContextReqData(BaseModel):
     medComponents: dict[str, MediaComponent]
-    notifUri: HttpUrl # Notification URI for Application Session Context termination requests.
-    suppFeat: str
-    ueIpv4: IPvAnyAddress
+    notifUri: HttpUrl  # Notification URI for Application Session Context termination requests.
+    suppFeat: Optional[str] = None
+    ueIpv4: Optional[IPvAnyAddress] = None
+
+    @classmethod
+    def from_subscription(
+        cls,
+        from_subscription: AsSessionWithQosSubscription,
+        medComponents: dict[str, MediaComponent],
+        notifUri: HttpUrl
+    ) -> "AppSessionContextReqData":
+        
+        """Create AppSessionContextReqData from subscription mapping values suppfeat and ipv4, with explicit medComponents and notifUri."""
+        return cls(
+            ueIpv4=from_subscription.ueIpv4Addr,
+            suppFeat=from_subscription.supportedFeatures,
+            medComponents=medComponents,
+            notifUri=notifUri
+        )
+
 
 class AppSessionContext(BaseModel):
     """This Class is used to define the AppSessionContextReqData"""
     ascReqData: AppSessionContextReqData # Contains the information for the creation of a new Individual Application Session Context resource.
 
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "ascReqData": {
+                        "ueIpv4": "10.45.0.4",
+                        "notifUri": "http://nef:8081/notifications/your-internal-session-id",
+                        "suppFeat": "003C",
+                        "medComponents": {
+                            "1": {
+                                "medCompN": 1,
+                                "fStatus": "ENABLED",
+                                "medType": "VIDEO",
+                                "marBwDl": "90000000",
+                                "marBwUl": "6000000",
+                                "medSubComps": {
+                                    "3": {
+                                        "fNum": 3,
+                                        "fDescs": [
+                                            "permit in ip from 10.45.0.4 to any",
+                                            "permit out ip from any to 10.45.0.4"
+                                        ],
+                                        "flowUsage": "NO_INFO"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    }

@@ -41,7 +41,7 @@ def test_create_subscription(client, example_subscription):
         "/3gpp-as-session-with-qos/v1/AS1586/subscriptions",
         json=example_subscription
     )
-
+    
     #SEND the request to PCF
     create_app_session_context_to_PCF(AsSessionWithQosSubscription(**example_subscription))
 
@@ -49,7 +49,6 @@ def test_create_subscription(client, example_subscription):
     data = resp.json()
     assert "subscriptionId" in data
     assert resp.headers["Location"].endswith(data["subscriptionId"])
-
 
 def test_get_all_subscriptions(client, example_subscription):
     # Create first
