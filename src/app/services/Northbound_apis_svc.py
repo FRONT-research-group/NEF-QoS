@@ -14,7 +14,7 @@ from app.helpers.callback import send_callback_to_as
 from app.helpers.problem_details import error_400, error_404, error_500
 from app.utils.app_config import NEF_BASE_URL
 
-from app.services.Southbound_apis_svc import create_app_session_context_to_PCF
+from app.services.Southbound_apis_svc import create_app_session_context_to_PCF, delete_app_session_context_from_PCF
 
 logger = get_app_logger()
 
@@ -192,7 +192,7 @@ async def delete_subscriptionId(
             logger.info(f"Deleted subscription {subscriptionId} for scsAsId={scsAsId}")
 
             # Remove the mapping of subscriptionId to appSessionId
-            delete_subId_with_appsessionId(subscriptionId)
+            delete_app_session_context_from_PCF(subscriptionId)
 
             notification_destination = str(sub.notificationDestination)
             

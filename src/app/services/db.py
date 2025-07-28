@@ -23,7 +23,14 @@ def map_subId_with_appsessionId(appsessionID):
         for sub in subscriptions:
             if not SUBSCRIPTION_ID_TO_APP_SESSION_ID.get(sub.subscriptionId):
                 SUBSCRIPTION_ID_TO_APP_SESSION_ID[sub.subscriptionId] = appsessionID
+                logger.info(f"Mapped subscriptionId {sub.subscriptionId} with appSessionId {appsessionID}")
     return SUBSCRIPTION_ID_TO_APP_SESSION_ID
+
+def get_app_session_id(subscriptionId):
+    """
+    Retrieves the app session ID associated with the given subscription ID.
+    """
+    return SUBSCRIPTION_ID_TO_APP_SESSION_ID.get(subscriptionId, None)
 
 def delete_subId_with_appsessionId(subscriptionId):
     """

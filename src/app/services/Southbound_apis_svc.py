@@ -1,13 +1,14 @@
+import json
 from app.schemas.qos_models import (
     AppSessionContext, AppSessionContextReqData, AsSessionWithQosSubscription,
     MediaComponent, MediaSubComponent, FlowStatus, MediaType
 )
 from app.utils.log import get_app_logger
 from app.utils.app_config import QOS_MAPPING
-from app.services.db import map_subId_with_appsessionId
-
+from app.services.db import map_subId_with_appsessionId, delete_subId_with_appsessionId, get_app_session_id
+from app.helpers.pcf_request_post import pcf_post_request
+from app.helpers.pcf_request_delete import pcf_delete_request
 logger = get_app_logger()
-
 
 
 
@@ -41,20 +42,51 @@ def create_app_session_context_to_PCF(initial_model: AsSessionWithQosSubscriptio
         medComponents=med_components,
         notifUri=initial_model.notificationDestination #FIXME which uri?currently is using the initial_initial_model notificationDestination
     )
+
+
     app_session_context = AppSessionContext(ascReqData=req_data)
 
+
+    # 
+    # Convert model to dict
+    payload = app_session_context.model_dump(mode="json")
+    # Pass dict to function (do NOT serialize here)
+    session_id = pcf_post_request(payload)
+
+    logger.debug(f"Payload to PCF: {json.dumps(payload, indent=2)}") 
+    #FIXME  check the medComponents and medsubComps as it is now its the same from the input of FlowId
+
+
+
+
     
-    logger.info("****This is a test of how the request body will be sent to PCF****")
+    # logger.info("****This is a test of how the request body will be sent to PCF****")
     # here implement http2 request to PCF
     # pcf returns a 201 Created response with a Location header
     #extracting the location header to get the appSessionId
     #end we map the appsessionid with the subscriptionId cause PCF gives a int as appSessionId
-    import random
-    map_subId_with_appsessionId(random.randint(100, 999))  # Simulating appSessionId mapping
+
+    map_subId_with_appsessionId(session_id)  # Simulating appSessionId mapping
 
 
-    logger.info(app_session_context.model_dump_json(indent=2))
-    return app_session_context
+    # logger.info(app_session_context.model_dump_json(indent=2))
+    # return app_session_context
+def delete_app_session_context_from_PCF(subscriptionId):
+    """
+    Deletes the App Session Context from PCF using the app_session_id.
+    """
+    session_id = get_app_session_id(subscriptionId)  # Get the app session ID from the mapping
+    logger.debug(f"subscriptionId: {subscriptionId} and session_id: {session_id}")
+
+    delete_subId_with_appsessionId(subscriptionId)# Remove mapping first
+    logger.debug(f"Deleted mapping for subscriptionId: {subscriptionId}")
+   # delete actual app session context from PCF
+    pcf_delete_request(session_id)
+
+
+    logger.debug(f"Deleted App Session Context for subscriptionId: {subscriptionId} and session_id: {session_id}")
+
+
 
 # The PCF will respond with a 201 Created header like this:
 # Name: Location

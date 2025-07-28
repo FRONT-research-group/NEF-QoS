@@ -5,7 +5,11 @@ import os
 import json
 
 NEF_BASE_URL = os.getenv("NEF_BASE_URL", "http://localhost:8081")
-PCF_BASE_URL = os.getenv("PCF_BASE_URL", "http://10.220.2.106:8086")
+PCF_BASE_URL = os.getenv("PCF_BASE_URL", "10.220.2.73")
+PCF_PORT = int(os.getenv("PCF_PORT", 8086))
+
+
+
 
 QOS_MAPPING = json.loads(os.getenv("QOS_MAPPING", json.dumps({
     "qod_1": {"marBwDl": "120 Mbps", "marBwUl": "120 Mbps", "mediaType": "CONTROL"},
