@@ -19,6 +19,7 @@ def in_memory_db():
     return SUBSCRIPTION_STORE
 
 def map_subId_with_appsessionId(appsessionID):
+    """ Maps subscriptionId to appSessionId in the in-memory store."""
     for subscriptions in SUBSCRIPTION_STORE.values():
         for sub in subscriptions:
             if not SUBSCRIPTION_ID_TO_APP_SESSION_ID.get(sub.subscriptionId):

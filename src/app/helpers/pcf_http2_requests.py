@@ -8,6 +8,7 @@ from app.utils.log import get_app_logger
 logger = get_app_logger()
 
 def pcf_post_request(payload):
+    """http2 POST request to PCF for creating QoS App Session."""
     path = '/npcf-policyauthorization/v1/app-sessions'
     body = json.dumps(payload).encode("utf-8")
 
@@ -64,5 +65,50 @@ def pcf_post_request(payload):
     sock.close()
     return session_id
 
-if __name__ == "__main__":
-    pcf_post_request()
+
+
+def pcf_delete_request(session_id):
+    """http2 DELETE request to PCF for deleting QoS App Session."""
+
+    path = (f'/npcf-policyauthorization/v1/app-sessions/{session_id}/delete')  # Replace with correct session ID
+
+    sock = socket.create_connection((PCF_BASE_URL, PCF_PORT))
+    conn = H2Connection()
+    conn.initiate_connection()
+    sock.sendall(conn.data_to_send())
+
+    stream_id = conn.get_next_available_stream_id()
+    conn.send_headers(
+        stream_id=stream_id,
+        headers=[
+            (':method', 'POST'),
+            (':scheme', 'http'),
+            (':authority', f'{PCF_BASE_URL}:{PCF_PORT}'),
+            (':path', path),
+            ('accept', 'application/json'),
+            ('content-length', '0'),
+        ],
+        end_stream=True  # No body
+    )
+    sock.sendall(conn.data_to_send())
+
+    response_ended = False
+
+    while not response_ended:
+        data = sock.recv(65535)
+        if not data:
+            break
+
+        events = conn.receive_data(data)
+        for event in events:
+            if isinstance(event, ResponseReceived):
+                print("🔹 Response headers:", event.headers)
+            elif isinstance(event, DataReceived):
+                print("🔹 Response body:", event.data.decode())
+            elif isinstance(event, StreamEnded):
+                response_ended = True
+
+        sock.sendall(conn.data_to_send())
+
+    sock.close()
+

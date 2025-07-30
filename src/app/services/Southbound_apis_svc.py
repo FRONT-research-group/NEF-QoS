@@ -6,8 +6,9 @@ from app.schemas.qos_models import (
 from app.utils.log import get_app_logger
 from app.utils.app_config import QOS_MAPPING
 from app.services.db import map_subId_with_appsessionId, delete_subId_with_appsessionId, get_app_session_id
-from app.helpers.pcf_request_post import pcf_post_request
-from app.helpers.pcf_request_delete import pcf_delete_request
+from app.helpers.pcf_http2_requests import pcf_delete_request,pcf_post_request
+
+
 logger = get_app_logger()
 
 
@@ -28,14 +29,14 @@ def create_app_session_context_to_PCF(initial_model: AsSessionWithQosSubscriptio
         for flow in initial_model.flowInfo:
             med_sub_comp = MediaSubComponent.from_flow_info(flow)
             med_component = MediaComponent(
-                medCompN=flow.flowId,
+                medCompN=1,  # Always set to 1 as because we request only one qos_profile
                 fStatus=FlowStatus.ENABLED,
                 medType=MediaType[qos_profile["mediaType"]],
                 marBwUl=qos_profile["marBwUl"],
                 marBwDl=qos_profile["marBwDl"],
                 medSubComps={str(flow.flowId): med_sub_comp}
             )
-            med_components[str(flow.flowId)] = med_component
+            med_components["1"] = med_component   # Always set to 1 as because we request only one qos_profile
 
     req_data = AppSessionContextReqData.from_subscription(
         from_subscription=initial_model,
@@ -54,10 +55,10 @@ def create_app_session_context_to_PCF(initial_model: AsSessionWithQosSubscriptio
     session_id = pcf_post_request(payload)
 
     logger.debug(f"Payload to PCF: {json.dumps(payload, indent=2)}") 
-    #FIXME  check the medComponents and medsubComps as it is now its the same from the input of FlowId
+ 
 
 
-
+# Return the AppSessionContext object
 
     
     # logger.info("****This is a test of how the request body will be sent to PCF****")
@@ -66,11 +67,14 @@ def create_app_session_context_to_PCF(initial_model: AsSessionWithQosSubscriptio
     #extracting the location header to get the appSessionId
     #end we map the appsessionid with the subscriptionId cause PCF gives a int as appSessionId
 
-    map_subId_with_appsessionId(session_id)  # Simulating appSessionId mapping
-
+    map_subId_with_appsessionId(session_id)  # appSessionId mapping
 
     # logger.info(app_session_context.model_dump_json(indent=2))
     # return app_session_context
+
+
+
+
 def delete_app_session_context_from_PCF(subscriptionId):
     """
     Deletes the App Session Context from PCF using the app_session_id.
@@ -88,16 +92,4 @@ def delete_app_session_context_from_PCF(subscriptionId):
 
 
 
-# The PCF will respond with a 201 Created header like this:
-# Name: Location
-# Data type: string
-# P Cardinality: M 1
-# Description:
-#   Contains the URI of the newly created resource, according to
-#   the structure: {apiRoot}/npcf-policyauthorization/v1/app-sessions/{appSessionId}
-
-#i want to map {appSessionId} which the pcf will return with my current UUID
-
-# Example function to extract appSessionId from a Location header
-
-#TODO add delete function to delete the appSessionId from the PCF
+#TODO maybe add a PATCH request also dont know if we need it 

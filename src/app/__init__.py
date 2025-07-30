@@ -3,7 +3,6 @@ Docstring
 '''
 from fastapi import FastAPI
 from app.routers import Northbound_apis
-from app.routers import Southbound_apis
 
 # FastAPI object customization
 FASTAPI_TITLE = "AsSessionWithQoS"
