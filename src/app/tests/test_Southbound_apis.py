@@ -20,7 +20,7 @@ from app.schemas.qos_models import AsSessionWithQosSubscriptionWithSubscriptionI
 
 
 
-def test_create_app_session_context_payload(example_subscription):
+def test_create_app_session_context_PCF(example_subscription):
     subscription_id = str(uuid4())
     subscription_with_id = AsSessionWithQosSubscriptionWithSubscriptionId(
         subscriptionId=subscription_id,
@@ -51,7 +51,6 @@ def test_create_app_session_context_payload(example_subscription):
             "permit out ip from any to 10.45.0.4"
         ]
 
-    # Step 5: Check mapping was registered correctly
     mapped_session_id = get_app_session_id(subscription_id)
     assert mapped_session_id == fake_session_id
     
@@ -59,10 +58,8 @@ def test_create_app_session_context_payload(example_subscription):
 
 
 
-
-
 @patch("app.services.Southbound_apis_svc.pcf_delete_request")
-def test_delete_app_session_context_from_PCF(mock_pcf_delete, example_subscription):
+def test_delete_app_session_context_PCF(mock_pcf_delete, example_subscription):
     """
 
     Test that delete_app_session_context_from_PCF:
