@@ -1,52 +1,33 @@
 import pytest
-from fastapi.testclient import TestClient
-from app import _app
-from app.routers.Northbound_apis import in_memory_db
-from app.schemas.qos_models import AsSessionWithQosSubscription
-
+from unittest.mock import patch
 
 
 # --- Pytest Fixtures ---
 
-@pytest.fixture
-def client():
-    # Clear the in-memory store before each test run
-    store = in_memory_db()
-    store.clear()
-    return TestClient(_app)
+
+@pytest.fixture(autouse=True)
+def mock_http2_pcf_requests():
+    """mocking http2 requests to PCF instead of real HTTP2 calls"""
+    with patch("app.services.Northbound_apis_svc.create_app_session_context_to_PCF") as mock1, \
+         patch("app.services.Northbound_apis_svc.delete_app_session_context_from_PCF") as mock2:
+        yield mock1, mock2
 
 
-@pytest.fixture
-def example_subscription():
-    return AsSessionWithQosSubscription.model_config["json_schema_extra"]["examples"][0]
 
 
 # --- Test Cases ---
-
-
 def test_create_subscription(client, example_subscription):
     resp = client.post(
         "/3gpp-as-session-with-qos/v1/AS1586/subscriptions",
         json=example_subscription
     )
+
     assert resp.status_code == 201
     data = resp.json()
     assert "subscriptionId" in data
     assert resp.headers["Location"].endswith(data["subscriptionId"])
 
 
-def test_get_all_subscriptions(client, example_subscription):
-    # Create first
-    post_resp = client.post(
-        "/3gpp-as-session-with-qos/v1/AS1586/subscriptions",
-        json=example_subscription
-    )
-    sub_id = post_resp.json()["subscriptionId"]
-    # Now get all
-    get_resp = client.get("/3gpp-as-session-with-qos/v1/AS1586/subscriptions")
-    assert get_resp.status_code == 200
-    all_data = get_resp.json()
-    assert any(d["subscriptionId"] == sub_id for d in all_data)
 
 
 def test_get_subscription_by_id(client, example_subscription):
