@@ -113,7 +113,7 @@ Through the Southbound interface, it takes the subscription and creates the need
    ```bash
    python3 src/main.py
    ```
-   The API will be available at `http://localhost:8000` by default.
+   The API will be available at `http://localhost:8001` by default.
 
 ### Running with Docker
 
@@ -123,7 +123,7 @@ Through the Southbound interface, it takes the subscription and creates the need
    ```
 2. **Run the container:**
    ```bash
-   docker run -d -p 8585:8000 --name nef-qos nef-qos
+   docker run -d -p 8585:8001 --name nef-qos nef-qos
    ```
    The API will be available at `http://localhost:8585`.
 
@@ -143,4 +143,11 @@ Through the Southbound interface, it takes the subscription and creates the need
 
 - Andreas Sakellaropoulos  
   For any questions or improvements, please contact me at [asakellaropoulos@iit.demokritos.gr](mailto:asakellaropoulos@iit.demokritos.gr)
+
+---
+
+## Notes
+
+- The current API was tested with Amarisoft (gNB) and Open5GS (core network). Compatibility with other 5G core or RAN vendors may require additional adaptation or validation.
+- The implementation follows 3GPP standards, but some features or behaviors may depend on the specific capabilities and compliance of the tested platforms.
 
