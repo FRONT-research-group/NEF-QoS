@@ -80,38 +80,38 @@ async def get_with_scsAsId_and_subscriptionId(
 
 
 ####### NOTE PUT AND PATCH METHODS ARE COMMENTED OUT CAUSE OPEN5GS DOESNT SUPPORT IT, BUT THEY ARE 3GPP COMPLIANT ########
-# @router.put(
-#     "/{scsAsId}/subscriptions/{subscriptionId}",
-#     tags=["AsSessionWithQoS API Subscription level CRUD Operations"],
-#     status_code=status.HTTP_200_OK,
-#     response_model=AsSessionWithQosSubscription,
-#     description="Updates/replaces an existing subscription resource"
-# )
-# async def update_with_PUT_scsAsId_and_subscriptionId(
-#     request: Request,
-#     scsAsId: str,
-#     subscriptionId: str,
-#     initial_model: AsSessionWithQosSubscription,
-#     store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(in_memory_db)) -> AsSessionWithQosSubscription:
+@router.put(
+    "/{scsAsId}/subscriptions/{subscriptionId}",
+    tags=["AsSessionWithQoS API Subscription level CRUD Operations"],
+    status_code=status.HTTP_200_OK,
+    response_model=AsSessionWithQosSubscription,
+    description="Updates/replaces an existing subscription resource"
+)
+async def update_with_PUT_scsAsId_and_subscriptionId(
+    request: Request,
+    scsAsId: str,
+    subscriptionId: str,
+    initial_model: AsSessionWithQosSubscription,
+    store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(in_memory_db)) -> AsSessionWithQosSubscription:
 
-#     return await put_scsAsId_and_subscriptionId(request,scsAsId, subscriptionId, initial_model, store)
+    return await put_scsAsId_and_subscriptionId(request,scsAsId, subscriptionId, initial_model, store)
 
 
-# @router.patch(
-#     "/{scsAsId}/subscriptions/{subscriptionId}",
-#     tags=["AsSessionWithQoS API Subscription level CRUD Operations"],
-#     status_code=status.HTTP_200_OK,
-#     response_model=AsSessionWithQosSubscription,
-#     description="Updates/replaces an existing subscription resource"
-# )
-# async def update_with_PATCH_scsAsId_and_subscriptionId(
-#     request: Request,
-#     scsAsId: str,
-#     subscriptionId: str,
-#     initial_model: AsSessionWithQosSubscriptionPatch,
-#     store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(in_memory_db)) -> AsSessionWithQosSubscription:
+@router.patch(
+    "/{scsAsId}/subscriptions/{subscriptionId}",
+    tags=["AsSessionWithQoS API Subscription level CRUD Operations"],
+    status_code=status.HTTP_200_OK,
+    response_model=AsSessionWithQosSubscription,
+    description="Updates/replaces an existing subscription resource"
+)
+async def update_with_PATCH_scsAsId_and_subscriptionId(
+    request: Request,
+    scsAsId: str,
+    subscriptionId: str,
+    initial_model: AsSessionWithQosSubscriptionPatch,
+    store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(in_memory_db)) -> AsSessionWithQosSubscription:
 
-#     return await patch_scsAsId_and_subscriptionId(request ,scsAsId, subscriptionId, initial_model, store)
+    return await patch_scsAsId_and_subscriptionId(request ,scsAsId, subscriptionId, initial_model, store)
 
 @router.delete(
     "/{scsAsId}/subscriptions/{subscriptionId}",
