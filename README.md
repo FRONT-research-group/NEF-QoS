@@ -9,7 +9,7 @@ The **AsSessionWithQoS API** enables an Application Function (AF) to establish a
 
 Below is a sequence diagram explaining the flow in the 5G architecture:
 
-![NEF QoS Flow](images/NEF2-qos.png)
+![NEF QoS Flow](images/NEF-qos.png)
 
 1. **AF/SCS/AS** sends `POST /3gpp-as-session-with-qos/v1/{scsAsId}/subscriptions` to the **NEF** to create a QoS subscription.
 2. **NEF** establishes an Individual Application Session Context on the **PCF**.
@@ -91,8 +91,6 @@ Through the Southbound interface, it takes the subscription and creates the need
 
 ---
 
-
----
 ## Installation
 
 ### Local Installation
