@@ -60,3 +60,68 @@ def error_500(request: Request, detail: str = "Internal Server Error"):
 
 def error_503(request: Request, detail: str = "Service Unavailable"):
     return create_problem_details(503, "Service Unavailable", detail, str(request.url))
+
+
+# Generate OpenAPI responses from problem_details functions
+def generate_error_responses():
+    """Generate OpenAPI error responses schema from problem_details functions"""
+    
+    error_definitions = {
+        400: {"title": "Bad Request", "has_invalid_params": True},
+        401: {"title": "Unauthorized", "has_invalid_params": False},
+        403: {"title": "Forbidden", "has_invalid_params": False},
+        404: {"title": "Not Found", "has_invalid_params": False},
+        406: {"title": "Not Acceptable", "has_invalid_params": False},
+        411: {"title": "Length Required", "has_invalid_params": False},
+        413: {"title": "Payload Too Large", "has_invalid_params": False},
+        415: {"title": "Unsupported Media Type", "has_invalid_params": False},
+        429: {"title": "Too Many Requests", "has_retry_after": True},
+        500: {"title": "Internal Server Error", "has_invalid_params": False},
+        503: {"title": "Service Unavailable", "has_invalid_params": False},
+    }
+    
+    responses = {}
+    
+    for status_code, config in error_definitions.items():
+        schema_props = {
+            "title": {"type": "string"},
+            "status": {"type": "integer"},
+            "detail": {"type": "string"},
+            "instance": {"type": "string"}
+        }
+        
+        example = {
+            "title": config["title"],
+            "status": status_code,
+            "detail": config["title"],
+            "instance": "/scs-as-id/subscriptions"
+        }
+        
+        # Add invalidParams for 400 errors
+        if config.get("has_invalid_params"):
+            schema_props["invalidParams"] = {
+                "type": "array",
+                "items": {"type": "object"}
+            }
+            example["invalidParams"] = [{"param": "example", "reason": "invalid value"}]
+        
+        # Add retryAfter for 429 errors
+        if config.get("has_retry_after"):
+            schema_props["retryAfter"] = {"type": "string"}
+            example["retryAfter"] = "60"
+        
+        responses[status_code] = {
+            "description": config["title"],
+            "content": {
+                "application/problem+json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": schema_props,
+                        "required": ["title", "status"]
+                    },
+                    "example": example
+                }
+            }
+        }
+    
+    return responses

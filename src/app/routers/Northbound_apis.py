@@ -14,6 +14,7 @@ from app.schemas.qos_models import (
     UserPlaneNotificationData
     
 )
+from app.helpers.problem_details import generate_error_responses
 from app.utils.log import get_app_logger
 from app.services.Northbound_apis_svc import (
     get_subscriptions_based_on_scsAsId,
@@ -29,6 +30,10 @@ from app.services.db import in_memory_db
 logger = get_app_logger()
 
 
+
+COMMON_ERROR_RESPONSES = generate_error_responses()
+
+
 router = APIRouter()
 
 
@@ -37,7 +42,8 @@ router = APIRouter()
     tags=["AsSessionWithQoS API SCS/AS level GET Operation"],
     status_code=status.HTTP_200_OK,
     response_model=List[AsSessionWithQosSubscriptionWithSubscriptionId],
-    description="Read all active subscriptions for the SCS/AS"
+    description="Read all active subscriptions for the SCS/AS",
+    responses=COMMON_ERROR_RESPONSES
 )
 async def get_all_subsciptions_based_on_SCSAS(
     request: Request,
@@ -52,7 +58,8 @@ async def get_all_subsciptions_based_on_SCSAS(
     tags=["AsSessionWithQoS API Subscription level CRUD Operations"],
     status_code=status.HTTP_201_CREATED,
     response_model=AsSessionWithQosSubscriptionWithSubscriptionId,
-    description="Creates a new subscription resource"
+    description="Creates a new subscription resource",
+    responses=COMMON_ERROR_RESPONSES
 )
 async def create_subscription(
     request: Request,
@@ -68,7 +75,8 @@ async def create_subscription(
     tags=["AsSessionWithQoS API Subscription level CRUD Operations"],
     status_code=status.HTTP_200_OK,
     response_model=AsSessionWithQosSubscription,
-    description="read an active subscriptions for the SCS/AS and the subscription Id"
+    description="read an active subscriptions for the SCS/AS and the subscription Id",
+    responses=COMMON_ERROR_RESPONSES
 )
 async def get_with_scsAsId_and_subscriptionId(
     request: Request,
@@ -80,45 +88,46 @@ async def get_with_scsAsId_and_subscriptionId(
 
 
 ####### NOTE PUT AND PATCH METHODS ARE COMMENTED OUT CAUSE OPEN5GS DOESNT SUPPORT IT, BUT THEY ARE 3GPP COMPLIANT ########
-@router.put(
-    "/{scsAsId}/subscriptions/{subscriptionId}",
-    tags=["AsSessionWithQoS API Subscription level CRUD Operations"],
-    status_code=status.HTTP_200_OK,
-    response_model=AsSessionWithQosSubscription,
-    description="Updates/replaces an existing subscription resource"
-)
-async def update_with_PUT_scsAsId_and_subscriptionId(
-    request: Request,
-    scsAsId: str,
-    subscriptionId: str,
-    initial_model: AsSessionWithQosSubscription,
-    store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(in_memory_db)) -> AsSessionWithQosSubscription:
+# @router.put(
+#     "/{scsAsId}/subscriptions/{subscriptionId}",
+#     tags=["AsSessionWithQoS API Subscription level CRUD Operations"],
+#     status_code=status.HTTP_200_OK,
+#     response_model=AsSessionWithQosSubscription,
+#     description="Updates/replaces an existing subscription resource"
+# )
+# async def update_with_PUT_scsAsId_and_subscriptionId(
+#     request: Request,
+#     scsAsId: str,
+#     subscriptionId: str,
+#     initial_model: AsSessionWithQosSubscription,
+#     store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(in_memory_db)) -> AsSessionWithQosSubscription:
 
-    return await put_scsAsId_and_subscriptionId(request,scsAsId, subscriptionId, initial_model, store)
+#     return await put_scsAsId_and_subscriptionId(request,scsAsId, subscriptionId, initial_model, store)
 
 
-@router.patch(
-    "/{scsAsId}/subscriptions/{subscriptionId}",
-    tags=["AsSessionWithQoS API Subscription level CRUD Operations"],
-    status_code=status.HTTP_200_OK,
-    response_model=AsSessionWithQosSubscription,
-    description="Updates/replaces an existing subscription resource"
-)
-async def update_with_PATCH_scsAsId_and_subscriptionId(
-    request: Request,
-    scsAsId: str,
-    subscriptionId: str,
-    initial_model: AsSessionWithQosSubscriptionPatch,
-    store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(in_memory_db)) -> AsSessionWithQosSubscription:
+# @router.patch(
+#     "/{scsAsId}/subscriptions/{subscriptionId}",
+#     tags=["AsSessionWithQoS API Subscription level CRUD Operations"],
+#     status_code=status.HTTP_200_OK,
+#     response_model=AsSessionWithQosSubscription,
+#     description="Updates/replaces an existing subscription resource"
+# )
+# async def update_with_PATCH_scsAsId_and_subscriptionId(
+#     request: Request,
+#     scsAsId: str,
+#     subscriptionId: str,
+#     initial_model: AsSessionWithQosSubscriptionPatch,
+#     store: Dict[str, List[AsSessionWithQosSubscriptionWithSubscriptionId]] = Depends(in_memory_db)) -> AsSessionWithQosSubscription:
 
-    return await patch_scsAsId_and_subscriptionId(request ,scsAsId, subscriptionId, initial_model, store)
+#     return await patch_scsAsId_and_subscriptionId(request ,scsAsId, subscriptionId, initial_model, store)
 
 @router.delete(
     "/{scsAsId}/subscriptions/{subscriptionId}",
     tags=["AsSessionWithQoS API Subscription level CRUD Operations"],
     status_code=status.HTTP_200_OK,
     response_model=UserPlaneNotificationData,
-    description="Deletes an already existing subscription"
+    description="Deletes an already existing subscription",
+    responses=COMMON_ERROR_RESPONSES
 )
 async def delete_with_scsAsId_and_subscriptionId(
     request: Request,
