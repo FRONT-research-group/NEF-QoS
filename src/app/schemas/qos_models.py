@@ -56,9 +56,9 @@ class AsSessionWithQosSubscription(BaseModel):
             "examples": [
                 {
                     "notificationDestination": "https://example.com/callback",
-                    "supportedFeatures": "003C",
+                    "supportedFeatures": "12",
                     "qosReference": "qod_2",
-                    "ueIpv4Addr": "10.45.0.3",
+                    "ueIpv4Addr": "10.45.0.4",
                     "flowInfo": [
                         {
                             "flowId": 1,
@@ -83,8 +83,8 @@ class AsSessionWithQosSubscriptionWithSubscriptionId(AsSessionWithQosSubscriptio
                 {   
                     "subscriptionId": "UUID-example",
                     "notificationDestination": "https://example.com/callback",
-                    "supportedFeatures": "003C",
-                    "ueIpv4Addr": "192.168.0.1",
+                    "supportedFeatures": "12",
+                    "ueIpv4Addr": "10.45.0.4",
                     "qosReference": "qod_2",
                     "flowInfo": [
                         {
@@ -263,7 +263,7 @@ class AppSessionContext(BaseModel):
                     "ascReqData": {
                         "ueIpv4": "10.45.0.4",
                         "notifUri": "http://nef:8081/notifications/your-internal-session-id",
-                        "suppFeat": "003C",
+                        "suppFeat": "12",
                         "medComponents": {
                             "1": {
                                 "medCompN": 1,
