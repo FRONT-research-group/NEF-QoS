@@ -41,7 +41,7 @@ def create_app_session_context_to_PCF(initial_model: AsSessionWithQosSubscriptio
     req_data = AppSessionContextReqData.from_subscription(
         from_subscription=initial_model,
         medComponents=med_components,
-        notifUri=initial_model.notificationDestination #FIXME which uri?currently is using the initial_initial_model notificationDestination
+        notifUri=initial_model.notificationDestination
     )
 
 
@@ -92,4 +92,6 @@ def delete_app_session_context_from_PCF(subscriptionId):
 
 
 
-#TODO maybe add a PATCH request also dont know if we need it 
+#TODO maybe add a PATCH request also dont know if we need it
+# ps i tested it and it works but only for uplink downlink, if i change MediaType to video or voice it creates a new qos_flow but with the same session_id 
+#NOTE GET request is not supported by open5gs

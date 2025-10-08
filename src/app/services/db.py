@@ -66,6 +66,9 @@ if __name__ == "__main__":
                 subscriptionId='995082ed-b16a-4595-affb-913e63249430'
             )
         ],
+
+
+        
         # 'example2': [
         #     AsSessionWithQosSubscriptionWithSubscriptionId(
         #         notificationDestination=HttpUrl('https://example.com/callback'),
@@ -134,4 +137,4 @@ if __name__ == "__main__":
         # ]
     }
     # Call the function and print the result
-    print(map_subId_with_appsessionId(166))
+    # print(map_subId_with_appsessionId(166))
