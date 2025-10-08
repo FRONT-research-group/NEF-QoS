@@ -41,7 +41,7 @@ def create_app_session_context_to_PCF(initial_model: AsSessionWithQosSubscriptio
     req_data = AppSessionContextReqData.from_subscription(
         from_subscription=initial_model,
         medComponents=med_components,
-        notifUri=initial_model.notificationDestination #FIXME which uri?currently is using the initial_initial_model notificationDestination
+        notifUri=initial_model.notificationDestination
     )
 
 
