@@ -1,4 +1,4 @@
-# NEF-ASSessionWithQoS
+# NEF-AsSessionWithQoS
 
 This project demonstrates the use of the **Network Exposure Function (NEF)** to interact with **Open5GS Policy Control Function (PCF)** and apply **Policy and Charging Control (PCC)** rules to manage **5G QoS (5Qi)** flows for specific subscriber sessions.
 
