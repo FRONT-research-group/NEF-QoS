@@ -131,6 +131,8 @@ Through the Southbound interface, it takes the subscription and creates the need
 
 ## Additional Documentation
 
+- **API Swagger:** [ASSessionWithQoS OpenAPI (Redoc)](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/FRONT-research-group/NEF-QoS/refs/heads/main/ASSessionWithQoS-openapi.yaml)
+
 - **API Schemas:**
   - See the [README](src/app/schemas/README.md) file for detailed Pydantic models and schema documentation used by the API.
 
