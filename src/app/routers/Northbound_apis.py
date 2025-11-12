@@ -26,6 +26,8 @@ from app.services.Northbound_apis_svc import (
 )
 from app.services.db import in_memory_db
 
+from app.auth import get_authentication_dependency
+
 
 logger = get_app_logger()
 
@@ -36,6 +38,7 @@ COMMON_ERROR_RESPONSES = generate_error_responses()
 
 router = APIRouter()
 
+verify_token = get_authentication_dependency()
 
 @router.get(
     "/{scsAsId}/subscriptions",
@@ -43,7 +46,8 @@ router = APIRouter()
     status_code=status.HTTP_200_OK,
     response_model=List[AsSessionWithQosSubscriptionWithSubscriptionId],
     description="Read all active subscriptions for the SCS/AS",
-    responses=COMMON_ERROR_RESPONSES
+    responses=COMMON_ERROR_RESPONSES,
+    dependencies= [Depends(verify_token)]
 )
 async def get_all_subsciptions_based_on_SCSAS(
     request: Request,
@@ -59,7 +63,8 @@ async def get_all_subsciptions_based_on_SCSAS(
     status_code=status.HTTP_201_CREATED,
     response_model=AsSessionWithQosSubscriptionWithSubscriptionId,
     description="Creates a new subscription resource",
-    responses=COMMON_ERROR_RESPONSES
+    responses=COMMON_ERROR_RESPONSES,
+    dependencies= [Depends(verify_token)]
 )
 async def create_subscription(
     request: Request,
@@ -76,7 +81,8 @@ async def create_subscription(
     status_code=status.HTTP_200_OK,
     response_model=AsSessionWithQosSubscription,
     description="read an active subscriptions for the SCS/AS and the subscription Id",
-    responses=COMMON_ERROR_RESPONSES
+    responses=COMMON_ERROR_RESPONSES,
+    dependencies= [Depends(verify_token)]
 )
 async def get_with_scsAsId_and_subscriptionId(
     request: Request,
@@ -127,7 +133,8 @@ async def get_with_scsAsId_and_subscriptionId(
     status_code=status.HTTP_200_OK,
     response_model=UserPlaneNotificationData,
     description="Deletes an already existing subscription",
-    responses=COMMON_ERROR_RESPONSES
+    responses=COMMON_ERROR_RESPONSES,
+    dependencies= [Depends(verify_token)]
 )
 async def delete_with_scsAsId_and_subscriptionId(
     request: Request,

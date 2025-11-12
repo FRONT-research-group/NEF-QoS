@@ -1,0 +1,1390 @@
+openapi: 3.1.0
+info:
+  title: AsSessionWithQoS
+  description: Qos API
+  version: 0.109.0
+paths:
+  '/3gpp-as-session-with-qos/v1/{scsAsId}/subscriptions':
+    get:
+      tags:
+        - AsSessionWithQoS API SCS/AS level GET Operation
+      summary: Get All Subsciptions Based On Scsas
+      description: Read all active subscriptions for the SCS/AS
+      operationId: >-
+        get_all_subsciptions_based_on_SCSAS_3gpp_as_session_with_qos_v1__scsAsId__subscriptions_get
+      parameters:
+        - name: scsAsId
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Scsasid
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: >-
+                    #/components/schemas/AsSessionWithQosSubscriptionWithSubscriptionId
+                title: >-
+                  Response Get All Subsciptions Based On Scsas 3Gpp As Session
+                  With Qos V1  Scsasid  Subscriptions Get
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                  invalidParams:
+                    type: array
+                    items:
+                      type: object
+                required:
+                  - title
+                  - status
+              example:
+                title: Bad Request
+                status: 400
+                detail: Bad Request
+                instance: /scs-as-id/subscriptions
+                invalidParams:
+                  - param: example
+                    reason: invalid value
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Unauthorized
+                status: 401
+                detail: Unauthorized
+                instance: /scs-as-id/subscriptions
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Forbidden
+                status: 403
+                detail: Forbidden
+                instance: /scs-as-id/subscriptions
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Not Found
+                status: 404
+                detail: Not Found
+                instance: /scs-as-id/subscriptions
+        '406':
+          description: Not Acceptable
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Not Acceptable
+                status: 406
+                detail: Not Acceptable
+                instance: /scs-as-id/subscriptions
+        '411':
+          description: Length Required
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Length Required
+                status: 411
+                detail: Length Required
+                instance: /scs-as-id/subscriptions
+        '413':
+          description: Payload Too Large
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Payload Too Large
+                status: 413
+                detail: Payload Too Large
+                instance: /scs-as-id/subscriptions
+        '415':
+          description: Unsupported Media Type
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Unsupported Media Type
+                status: 415
+                detail: Unsupported Media Type
+                instance: /scs-as-id/subscriptions
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '429':
+          description: Too Many Requests
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                  retryAfter:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Too Many Requests
+                status: 429
+                detail: Too Many Requests
+                instance: /scs-as-id/subscriptions
+                retryAfter: '60'
+        '500':
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Internal Server Error
+                status: 500
+                detail: Internal Server Error
+                instance: /scs-as-id/subscriptions
+        '503':
+          description: Service Unavailable
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Service Unavailable
+                status: 503
+                detail: Service Unavailable
+                instance: /scs-as-id/subscriptions
+    post:
+      tags:
+        - AsSessionWithQoS API Subscription level CRUD Operations
+      summary: Create Subscription
+      description: Creates a new subscription resource
+      operationId: >-
+        create_subscription_3gpp_as_session_with_qos_v1__scsAsId__subscriptions_post
+      parameters:
+        - name: scsAsId
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Scsasid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AsSessionWithQosSubscription'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/AsSessionWithQosSubscriptionWithSubscriptionId
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                  invalidParams:
+                    type: array
+                    items:
+                      type: object
+                required:
+                  - title
+                  - status
+              example:
+                title: Bad Request
+                status: 400
+                detail: Bad Request
+                instance: /scs-as-id/subscriptions
+                invalidParams:
+                  - param: example
+                    reason: invalid value
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Unauthorized
+                status: 401
+                detail: Unauthorized
+                instance: /scs-as-id/subscriptions
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Forbidden
+                status: 403
+                detail: Forbidden
+                instance: /scs-as-id/subscriptions
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Not Found
+                status: 404
+                detail: Not Found
+                instance: /scs-as-id/subscriptions
+        '406':
+          description: Not Acceptable
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Not Acceptable
+                status: 406
+                detail: Not Acceptable
+                instance: /scs-as-id/subscriptions
+        '411':
+          description: Length Required
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Length Required
+                status: 411
+                detail: Length Required
+                instance: /scs-as-id/subscriptions
+        '413':
+          description: Payload Too Large
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Payload Too Large
+                status: 413
+                detail: Payload Too Large
+                instance: /scs-as-id/subscriptions
+        '415':
+          description: Unsupported Media Type
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Unsupported Media Type
+                status: 415
+                detail: Unsupported Media Type
+                instance: /scs-as-id/subscriptions
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '429':
+          description: Too Many Requests
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                  retryAfter:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Too Many Requests
+                status: 429
+                detail: Too Many Requests
+                instance: /scs-as-id/subscriptions
+                retryAfter: '60'
+        '500':
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Internal Server Error
+                status: 500
+                detail: Internal Server Error
+                instance: /scs-as-id/subscriptions
+        '503':
+          description: Service Unavailable
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Service Unavailable
+                status: 503
+                detail: Service Unavailable
+                instance: /scs-as-id/subscriptions
+  '/3gpp-as-session-with-qos/v1/{scsAsId}/subscriptions/{subscriptionId}':
+    get:
+      tags:
+        - AsSessionWithQoS API Subscription level CRUD Operations
+      summary: Get With Scsasid And Subscriptionid
+      description: read an active subscriptions for the SCS/AS and the subscription Id
+      operationId: >-
+        get_with_scsAsId_and_subscriptionId_3gpp_as_session_with_qos_v1__scsAsId__subscriptions__subscriptionId__get
+      parameters:
+        - name: scsAsId
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Scsasid
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Subscriptionid
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsSessionWithQosSubscription'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                  invalidParams:
+                    type: array
+                    items:
+                      type: object
+                required:
+                  - title
+                  - status
+              example:
+                title: Bad Request
+                status: 400
+                detail: Bad Request
+                instance: /scs-as-id/subscriptions
+                invalidParams:
+                  - param: example
+                    reason: invalid value
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Unauthorized
+                status: 401
+                detail: Unauthorized
+                instance: /scs-as-id/subscriptions
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Forbidden
+                status: 403
+                detail: Forbidden
+                instance: /scs-as-id/subscriptions
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Not Found
+                status: 404
+                detail: Not Found
+                instance: /scs-as-id/subscriptions
+        '406':
+          description: Not Acceptable
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Not Acceptable
+                status: 406
+                detail: Not Acceptable
+                instance: /scs-as-id/subscriptions
+        '411':
+          description: Length Required
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Length Required
+                status: 411
+                detail: Length Required
+                instance: /scs-as-id/subscriptions
+        '413':
+          description: Payload Too Large
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Payload Too Large
+                status: 413
+                detail: Payload Too Large
+                instance: /scs-as-id/subscriptions
+        '415':
+          description: Unsupported Media Type
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Unsupported Media Type
+                status: 415
+                detail: Unsupported Media Type
+                instance: /scs-as-id/subscriptions
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '429':
+          description: Too Many Requests
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                  retryAfter:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Too Many Requests
+                status: 429
+                detail: Too Many Requests
+                instance: /scs-as-id/subscriptions
+                retryAfter: '60'
+        '500':
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Internal Server Error
+                status: 500
+                detail: Internal Server Error
+                instance: /scs-as-id/subscriptions
+        '503':
+          description: Service Unavailable
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Service Unavailable
+                status: 503
+                detail: Service Unavailable
+                instance: /scs-as-id/subscriptions
+    delete:
+      tags:
+        - AsSessionWithQoS API Subscription level CRUD Operations
+      summary: Delete With Scsasid And Subscriptionid
+      description: Deletes an already existing subscription
+      operationId: >-
+        delete_with_scsAsId_and_subscriptionId_3gpp_as_session_with_qos_v1__scsAsId__subscriptions__subscriptionId__delete
+      parameters:
+        - name: scsAsId
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Scsasid
+        - name: subscriptionId
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Subscriptionid
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPlaneNotificationData'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                  invalidParams:
+                    type: array
+                    items:
+                      type: object
+                required:
+                  - title
+                  - status
+              example:
+                title: Bad Request
+                status: 400
+                detail: Bad Request
+                instance: /scs-as-id/subscriptions
+                invalidParams:
+                  - param: example
+                    reason: invalid value
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Unauthorized
+                status: 401
+                detail: Unauthorized
+                instance: /scs-as-id/subscriptions
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Forbidden
+                status: 403
+                detail: Forbidden
+                instance: /scs-as-id/subscriptions
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Not Found
+                status: 404
+                detail: Not Found
+                instance: /scs-as-id/subscriptions
+        '406':
+          description: Not Acceptable
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Not Acceptable
+                status: 406
+                detail: Not Acceptable
+                instance: /scs-as-id/subscriptions
+        '411':
+          description: Length Required
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Length Required
+                status: 411
+                detail: Length Required
+                instance: /scs-as-id/subscriptions
+        '413':
+          description: Payload Too Large
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Payload Too Large
+                status: 413
+                detail: Payload Too Large
+                instance: /scs-as-id/subscriptions
+        '415':
+          description: Unsupported Media Type
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Unsupported Media Type
+                status: 415
+                detail: Unsupported Media Type
+                instance: /scs-as-id/subscriptions
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '429':
+          description: Too Many Requests
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                  retryAfter:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Too Many Requests
+                status: 429
+                detail: Too Many Requests
+                instance: /scs-as-id/subscriptions
+                retryAfter: '60'
+        '500':
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Internal Server Error
+                status: 500
+                detail: Internal Server Error
+                instance: /scs-as-id/subscriptions
+        '503':
+          description: Service Unavailable
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                required:
+                  - title
+                  - status
+              example:
+                title: Service Unavailable
+                status: 503
+                detail: Service Unavailable
+                instance: /scs-as-id/subscriptions
+components:
+  schemas:
+    AsSessionWithQosSubscription:
+      properties:
+        notificationDestination:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Notificationdestination
+        supportedFeatures:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Supportedfeatures
+        qosReference:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Qosreference
+        ueIpv4Addr:
+          anyOf:
+            - type: string
+              format: ipvanyaddress
+            - type: 'null'
+          title: Ueipv4Addr
+        flowInfo:
+          anyOf:
+            - items:
+                $ref: '#/components/schemas/FlowInfo'
+              type: array
+            - type: 'null'
+          title: Flowinfo
+      type: object
+      required:
+        - notificationDestination
+      title: AsSessionWithQosSubscription
+      examples:
+        - flowInfo:
+            - flowDescriptions:
+                - permit in ip from 10.45.0.4 to any
+                - permit out ip from any to 10.45.0.4
+              flowId: 1
+          notificationDestination: 'https://example.com/callback'
+          qosReference: qod_2
+          supportedFeatures: 003C
+          ueIpv4Addr: 10.45.0.3
+    AsSessionWithQosSubscriptionWithSubscriptionId:
+      properties:
+        notificationDestination:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Notificationdestination
+        supportedFeatures:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Supportedfeatures
+        qosReference:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Qosreference
+        ueIpv4Addr:
+          anyOf:
+            - type: string
+              format: ipvanyaddress
+            - type: 'null'
+          title: Ueipv4Addr
+        flowInfo:
+          anyOf:
+            - items:
+                $ref: '#/components/schemas/FlowInfo'
+              type: array
+            - type: 'null'
+          title: Flowinfo
+        subscriptionId:
+          type: string
+          title: Subscriptionid
+      type: object
+      required:
+        - notificationDestination
+        - subscriptionId
+      title: AsSessionWithQosSubscriptionWithSubscriptionId
+      description: >-
+        This Class is used to add the subscriptionId to the existing
+        AsSessionWithQosSubscription model
+      examples:
+        - flowInfo:
+            - flowDescriptions:
+                - permit in ip from 10.45.0.4 to any
+                - permit out ip from any to 10.45.0.4
+              flowId: 1
+          notificationDestination: 'https://example.com/callback'
+          qosReference: qod_2
+          subscriptionId: UUID-example
+          supportedFeatures: 003C
+          ueIpv4Addr: 192.168.0.1
+    FlowInfo:
+      properties:
+        flowId:
+          type: integer
+          title: Flowid
+        flowDescriptions:
+          anyOf:
+            - items:
+                type: string
+              type: array
+            - type: 'null'
+          title: Flowdescriptions
+      type: object
+      required:
+        - flowId
+      title: FlowInfo
+      description: >-
+        Validates the Flow-Description format as per 3GPP TS 129_214 clause
+        5.3.8
+      examples:
+        - flowDescriptions:
+            - permit in ip from 10.45.0.4 to any
+            - permit out ip from any to 10.45.0.4
+          flowId: 1
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    UserPlaneEvent:
+      type: string
+      enum:
+        - SESSION_TERMINATION
+        - LOSS_OF_BEARER
+        - RECOVERY_OF_BEARER
+        - RELEASE_OF_BEARER
+        - USAGE_REPORT
+        - FAILED_RESOURCES_ALLOCATION
+        - SUCCESSFUL_RESOURCES_ALLOCATION
+      title: UserPlaneEvent
+      description: 'Table 5.2.1.3.3-1: Enumeration Event as per 3GPP TS 29.122'
+    UserPlaneEventReport:
+      properties:
+        event:
+          $ref: '#/components/schemas/UserPlaneEvent'
+      type: object
+      required:
+        - event
+      title: UserPlaneEventReport
+    UserPlaneNotificationData:
+      properties:
+        transaction:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Transaction
+        eventReports:
+          items:
+            $ref: '#/components/schemas/UserPlaneEventReport'
+          type: array
+          title: Eventreports
+      type: object
+      required:
+        - transaction
+        - eventReports
+      title: UserPlaneNotificationData
+      examples:
+        - eventReports:
+            - event: SESSION_TERMINATION
+          transaction: >-
+            http://localhost:8001/3gpp-as-session-with-qos/v1/example/subscriptions/4e27a197-075f-4cab-8750-23cbbc316f8c
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      title: ValidationError

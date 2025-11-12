@@ -12,7 +12,6 @@ logger.info('*** NEF-AsSessionWithQos **')
 logger.info(f'NEF Base URL: {NEF_BASE_URL}')
 logger.info(f'PCF Base URL: {PCF_BASE_URL}')
 
-
 if __name__ == "__main__":
   import uvicorn
   uvicorn.run(_app, host="0.0.0.0", port=8001)

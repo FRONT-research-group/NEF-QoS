@@ -20,5 +20,7 @@ def get_app_logger():
         stream_handler.setLevel(logging.DEBUG)  # Show debug logs in console too
         stream_handler.setFormatter(formatter)
         logger.addHandler(stream_handler)
+        
+        logger.propagate = False
 
     return logger

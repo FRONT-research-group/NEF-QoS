@@ -2,10 +2,13 @@ import os
 import json
 
 NEF_BASE_URL = os.getenv("NEF_BASE_URL", "http://localhost:8001")
-PCF_BASE_URL = os.getenv("PCF_BASE_URL", "10.220.2.73")
+PCF_BASE_URL = os.getenv("PCF_BASE_URL", "10.220.2.43")
 PCF_PORT = int(os.getenv("PCF_PORT", 8086))
 
-
+# integrate capif framework
+PROVIDER_FOLDER_PATH = os.getenv("PROVIDER_FOLDER_PATH", "./src/app/provider_onboarding/provider_folder")
+ALGORITHM = os.getenv("ALGORITHM", "RS256")
+CAPIF_USER = os.getenv("CAPIF_USER", "camara_user_qod")
 
 
 QOS_MAPPING = json.loads(os.getenv("QOS_MAPPING", json.dumps({
