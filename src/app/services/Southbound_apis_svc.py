@@ -7,13 +7,15 @@ from app.utils.log import get_app_logger
 from app.utils.app_config import QOS_MAPPING
 from app.services.db import map_subId_with_appsessionId, delete_subId_with_appsessionId, get_app_session_id
 from app.helpers.pcf_http2_requests import pcf_delete_request,pcf_post_request
+from app.helpers.callback import send_callback_to_as
+from app.schemas.qos_models import UserPlaneEvent
 
 
 logger = get_app_logger()
 
 
 
-def create_app_session_context_to_PCF(initial_model: AsSessionWithQosSubscription):
+async def create_app_session_context_to_PCF(initial_model: AsSessionWithQosSubscription, scsAsId: str, subscriptionId: str):
     """
     Create the requestbody for the pcf, mapping values from the NorthboundApi
     like suppfeat, ipv4, and using QOS_MAPPING for QoS parameters.
@@ -52,9 +54,14 @@ def create_app_session_context_to_PCF(initial_model: AsSessionWithQosSubscriptio
     # Convert model to dict
     payload = app_session_context.model_dump(mode="json")
     # Pass dict to function (do NOT serialize here)
-    session_id = pcf_post_request(payload)
+    session_id, status_code = pcf_post_request(payload)
 
-    logger.debug(f"Payload to PCF: {json.dumps(payload, indent=2)}") 
+    logger.debug(f"Payload to PCF: {json.dumps(payload, indent=2)}")
+    
+    # Check if PCF returned an error (404 or other failure status)
+    if status_code and status_code >= 400:
+        logger.error(f"PCF returned error status {status_code}")
+        raise Exception(f"PCF resource allocation failed with status {status_code}") 
  
 
 
@@ -67,8 +74,9 @@ def create_app_session_context_to_PCF(initial_model: AsSessionWithQosSubscriptio
     #extracting the location header to get the appSessionId
     #end we map the appsessionid with the subscriptionId cause PCF gives a int as appSessionId
 
-    map_subId_with_appsessionId(session_id)  # appSessionId mapping
-
+    if session_id:
+        map_subId_with_appsessionId(session_id)  # appSessionId mapping
+    
     # logger.info(app_session_context.model_dump_json(indent=2))
     # return app_session_context
 

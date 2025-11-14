@@ -66,10 +66,11 @@ async def create_subscription_for_a_given_scsAsId(
         
         notification_destination = str(full_subscription.notificationDestination)
 
-        await send_callback_to_as(notification_destination, scsAsId, subscription_id, event=UserPlaneEvent.SUCCESSFUL_RESOURCES_ALLOCATION)
-        
         #Send request to PCF to create AppSessionContext
-        create_app_session_context_to_PCF(initial_model)
+        await create_app_session_context_to_PCF(initial_model, scsAsId, subscription_id)
+        
+        # Only send success notification if PCF call succeeded
+        await send_callback_to_as(notification_destination, scsAsId, subscription_id, event=UserPlaneEvent.SUCCESSFUL_RESOURCES_ALLOCATION)
 
         success = True  
         return full_subscription
@@ -77,9 +78,9 @@ async def create_subscription_for_a_given_scsAsId(
     except Exception as e:
         logger.error(f"Error while creating subscription for scsAsId={scsAsId}: {e}")
         error_message = str(e)
-
-    finally:
-        if not success and notification_destination and subscription_id:
+        
+        # Send failure notification 
+        if notification_destination and subscription_id:
             try:
                 await send_callback_to_as(notification_destination, scsAsId, subscription_id, event=UserPlaneEvent.FAILED_RESOURCES_ALLOCATION)
             except Exception as callback_error:

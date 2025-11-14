@@ -40,6 +40,7 @@ def pcf_post_request(payload):
     # Receive response
     response_ended = False
     session_id = None
+    status_code = None
 
     while not response_ended:
         data = sock.recv(65535)
@@ -51,6 +52,9 @@ def pcf_post_request(payload):
             if isinstance(event, ResponseReceived):
                 logger.info(f"Response headers: {event.headers}")
                 for name, value in event.headers:
+                    if name.lower() == b':status':
+                        status_code = int(value.decode())
+                        logger.info(f"Response status code: {status_code}")
                     if name.lower() == b'location':
                         location_url = value.decode()
                         session_id = location_url.rstrip('/').split('/')[-1]
@@ -63,7 +67,7 @@ def pcf_post_request(payload):
         sock.sendall(conn.data_to_send())
 
     sock.close()
-    return session_id
+    return session_id, status_code
 
 
 
