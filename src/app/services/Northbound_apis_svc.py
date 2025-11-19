@@ -41,51 +41,76 @@ async def create_subscription_for_a_given_scsAsId(
     initial_model: AsSessionWithQosSubscription,
     response: Response,
     store: Dict[str, List[AsSessionWithQosSubscription]] = Depends(in_memory_db))-> AsSessionWithQosSubscriptionWithSubscriptionId:
-
-
+    """
+    Create a new AsSessionWithQoS subscription and forward to PCF.
+    
+    Flow:
+    1. Validate request and create subscription in local store
+    2. Forward request to PCF to allocate network resources
+    3. Send SUCCESSFUL_RESOURCES_ALLOCATION if PCF succeeds
+    4. Send FAILED_RESOURCES_ALLOCATION if PCF fails
+    """
     subscription_id = None
     notification_destination = None
-    success = False
 
     try:
+        # Validate request body
         if not initial_model:
             return error_400(request, "Request body is missing or invalid.")
         
+        # Initialize store for this scsAsId if not exists
         if scsAsId not in store:
             store[scsAsId] = []
 
+        # Create subscription with unique ID
         subscription_id = str(uuid4())
         full_subscription = AsSessionWithQosSubscriptionWithSubscriptionId(
             subscriptionId=subscription_id,
             **initial_model.model_dump()
         )
+        
+        # Store subscription in database
         store[scsAsId].append(full_subscription)
 
+        # Set Location header for created resource
         response.headers["Location"] = f"/3gpp-as-session-with-qos/v1/{scsAsId}/subscriptions/{subscription_id}"
         logger.info(f"Created subscription {subscription_id} for scsAsId={scsAsId}")
         
         notification_destination = str(full_subscription.notificationDestination)
 
-        await send_callback_to_as(notification_destination, scsAsId, subscription_id, event=UserPlaneEvent.SUCCESSFUL_RESOURCES_ALLOCATION)
+        # Forward request to PCF to create AppSessionContext
+        # This will raise an exception if PCF returns an error status
+        logger.debug(f"Forwarding subscription {subscription_id} to PCF")
+        await create_app_session_context_to_PCF(initial_model, scsAsId, subscription_id)
         
-        #Send request to PCF to create AppSessionContext
-        create_app_session_context_to_PCF(initial_model)
+        # PCF succeeded - send success notification to AS
+        logger.info(f"PCF successfully allocated resources for subscription {subscription_id}")
+        await send_callback_to_as(
+            notification_destination, 
+            scsAsId, 
+            subscription_id, 
+            event=UserPlaneEvent.SUCCESSFUL_RESOURCES_ALLOCATION
+        )
 
-        success = True  
         return full_subscription
 
     except Exception as e:
-        logger.error(f"Error while creating subscription for scsAsId={scsAsId}: {e}")
-        error_message = str(e)
-
-    finally:
-        if not success and notification_destination and subscription_id:
+        logger.error(f"Failed to create subscription for scsAsId={scsAsId}: {e}")
+        
+        # Send failure notification to AS if we have the necessary info
+        if notification_destination and subscription_id:
+            logger.info(f"Sending FAILED_RESOURCES_ALLOCATION notification for subscription {subscription_id}")
             try:
-                await send_callback_to_as(notification_destination, scsAsId, subscription_id, event=UserPlaneEvent.FAILED_RESOURCES_ALLOCATION)
+                await send_callback_to_as(
+                    notification_destination, 
+                    scsAsId, 
+                    subscription_id, 
+                    event=UserPlaneEvent.FAILED_RESOURCES_ALLOCATION
+                )
             except Exception as callback_error:
-                logger.error(f"Callback failed during FAILED_RESOURCES_ALLOCATION: {callback_error}")
+                logger.error(f"Failed to send failure notification: {callback_error}")
 
-    return error_500(request, f"Unexpected error: {error_message if 'error_message' in locals() else 'Unknown error'}")
+        return error_500(request, f"Failed to create subscription: {str(e)}")
 
 
 async def get_ResponseBody_by_scsAsId_and_subscriptionId(

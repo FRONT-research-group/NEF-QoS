@@ -6,11 +6,11 @@ from enum import Enum
 
 FLOW_DESCRIPTION_REGEX = re.compile(
     r'^permit (in|out) (ip|tcp|udp) from '
-    r'([0-9a-fA-F:.]+|any)(?: (?:(?:0|[1-9][0-9]{0,4})))? to '
-    r'([0-9a-fA-F:.]+|any)(?: (?:(?:0|[1-9][0-9]{0,4})))?$'
+    r'([0-9a-fA-F:.]+(?:/\d+)?|any)(?: (?:(?:0|[1-9][0-9]{0,4})|(?:[0-9]+-[0-9]+)))? to '
+    r'([0-9a-fA-F:.]+(?:/\d+)?|any)(?: (?:(?:0|[1-9][0-9]{0,4})|(?:[0-9]+-[0-9]+)))?$'
 )
 
-FORBIDDEN_KEYWORDS = ["!", "options", "assigned", ",", "-", ".."]
+FORBIDDEN_KEYWORDS = ["!", "options", "assigned", ",", ".."]
 
 
 class FlowInfo(BaseModel):
