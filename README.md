@@ -153,3 +153,4 @@ Through the Southbound interface, it takes the subscription and creates the need
 - The current API was tested with Amarisoft (gNB) and Open5GS (core network). Compatibility with other 5G core or RAN vendors may require additional adaptation or validation.
 - The implementation follows 3GPP standards, but some features or behaviors may depend on the specific capabilities and compliance of the tested platforms.
 
+---
