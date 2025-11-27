@@ -57,7 +57,7 @@ class AsSessionWithQosSubscription(BaseModel):
                 {
                     "notificationDestination": "https://example.com/callback",
                     "supportedFeatures": "12",
-                    "qosReference": "qod_2",
+                    "qosReference": "QOS_L",
                     "ueIpv4Addr": "10.45.0.4",
                     "flowInfo": [
                         {

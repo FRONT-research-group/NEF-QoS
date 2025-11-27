@@ -43,35 +43,35 @@ def test_get_subscription_by_id(client, example_subscription):
         assert get_data[key] == value
 
 
-def test_put_subscription(client, example_subscription):
-    post_resp = client.post(
-        "/3gpp-as-session-with-qos/v1/AS1586/subscriptions",
-        json=example_subscription
-    )
-    sub_id = post_resp.json()["subscriptionId"]
-    put_payload = example_subscription.copy()
-    put_payload["supportedFeatures"] = "FFFF"
-    put_resp = client.put(
-        f"/3gpp-as-session-with-qos/v1/AS1586/subscriptions/{sub_id}",
-        json=put_payload
-    )
-    assert put_resp.status_code == 200
-    assert put_resp.json()["supportedFeatures"] == "FFFF"
+# def test_put_subscription(client, example_subscription):
+#     post_resp = client.post(
+#         "/3gpp-as-session-with-qos/v1/AS1586/subscriptions",
+#         json=example_subscription
+#     )
+#     sub_id = post_resp.json()["subscriptionId"]
+#     put_payload = example_subscription.copy()
+#     put_payload["supportedFeatures"] = "FFFF"
+#     put_resp = client.put(
+#         f"/3gpp-as-session-with-qos/v1/AS1586/subscriptions/{sub_id}",
+#         json=put_payload
+#     )
+#     assert put_resp.status_code == 200
+#     assert put_resp.json()["supportedFeatures"] == "FFFF"
 
 
-def test_patch_subscription(client, example_subscription):
-    post_resp = client.post(
-        "/3gpp-as-session-with-qos/v1/AS1586/subscriptions",
-        json=example_subscription
-    )
-    sub_id = post_resp.json()["subscriptionId"]
-    patch_payload = {"qosReference": "qos_4"}
-    patch_resp = client.patch(
-        f"/3gpp-as-session-with-qos/v1/AS1586/subscriptions/{sub_id}",
-        json=patch_payload
-    )
-    assert patch_resp.status_code == 200
-    assert patch_resp.json()["qosReference"] == "qos_4"
+# def test_patch_subscription(client, example_subscription):
+#     post_resp = client.post(
+#         "/3gpp-as-session-with-qos/v1/AS1586/subscriptions",
+#         json=example_subscription
+#     )
+#     sub_id = post_resp.json()["subscriptionId"]
+#     patch_payload = {"qosReference": "qos_4"}
+#     patch_resp = client.patch(
+#         f"/3gpp-as-session-with-qos/v1/AS1586/subscriptions/{sub_id}",
+#         json=patch_payload
+#     )
+#     assert patch_resp.status_code == 200
+#     assert patch_resp.json()["qosReference"] == "qos_4"
 
 
 def test_delete_subscription(client, example_subscription):

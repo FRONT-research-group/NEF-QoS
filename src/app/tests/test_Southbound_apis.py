@@ -1,4 +1,5 @@
-from unittest.mock import patch
+import pytest
+from unittest.mock import patch, AsyncMock
 from uuid import uuid4
 
 from app.services.Southbound_apis_svc import (
@@ -20,24 +21,26 @@ from app.schemas.qos_models import AsSessionWithQosSubscriptionWithSubscriptionI
 
 
 
-def test_create_app_session_context_PCF(example_subscription):
+@pytest.mark.asyncio
+async def test_create_app_session_context_PCF(example_subscription):
     subscription_id = str(uuid4())
+    scs_as_id = "AS1586"
     subscription_with_id = AsSessionWithQosSubscriptionWithSubscriptionId(
         subscriptionId=subscription_id,
         **example_subscription
     )
 
-    SUBSCRIPTION_STORE["test"] = [subscription_with_id]
+    SUBSCRIPTION_STORE[scs_as_id] = [subscription_with_id]
 
     subscription_model = AsSessionWithQosSubscription(**example_subscription)
 
     fake_session_id = "fake-session-id-123"
 
-    #  Patch the pcf_post_request to return the fake session ID
+    #  Patch the pcf_post_request to return the fake session ID and status code
     with patch("app.services.Southbound_apis_svc.pcf_post_request") as mock_post:
-        mock_post.return_value = fake_session_id
+        mock_post.return_value = (fake_session_id, 201)
 
-        create_app_session_context_to_PCF(subscription_model)
+        await create_app_session_context_to_PCF(subscription_model, scs_as_id, subscription_id)
 
         assert mock_post.called is True
         payload = mock_post.call_args[0][0]
@@ -54,6 +57,7 @@ def test_create_app_session_context_PCF(example_subscription):
     mapped_session_id = get_app_session_id(subscription_id)
     assert mapped_session_id == fake_session_id
     
+
 
 
 

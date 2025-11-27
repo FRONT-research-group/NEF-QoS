@@ -23,7 +23,7 @@ def example_subscription():
             }
         ],
         "notificationDestination": "https://example.com/callback",
-        "qosReference": "qod_2",
+        "qosReference": "QOS_L",
         "supportedFeatures": "003C",
         "ueIpv4Addr": "10.45.0.3"
     }
