@@ -154,3 +154,8 @@ Through the Southbound interface, it takes the subscription and creates the need
 - The implementation follows 3GPP standards, but some features or behaviors may depend on the specific capabilities and compliance of the tested platforms.
 
 ---
+
+## License
+This project is licensed under the Apache License 2.0.
+
+---
