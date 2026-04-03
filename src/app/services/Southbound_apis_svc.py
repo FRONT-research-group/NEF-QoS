@@ -36,6 +36,8 @@ async def create_app_session_context_to_PCF(initial_model: AsSessionWithQosSubsc
                 medType=MediaType[qos_profile["mediaType"]],
                 marBwUl=qos_profile["marBwUl"],
                 marBwDl=qos_profile["marBwDl"],
+                mirBwUl=qos_profile.get("mirBwUl"),
+                mirBwDl=qos_profile.get("mirBwDl"),
                 medSubComps={str(flow.flowId): med_sub_comp}
             )
             med_components["1"] = med_component   # Always set to 1 as because we request only one qos_profile
