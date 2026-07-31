@@ -16,10 +16,10 @@ QOS_MAPPING = json.loads(os.getenv("QOS_MAPPING", json.dumps({
     #"qod_1": {"marBwDl": "120 Mbps", "marBwUl": "120 Mbps", "mediaType": "CONTROL"}, 
    
    
-    "QOS_E": {"marBwDl": "1 Mbps", "marBwUl": "1 Mbps", "mirBwDl": "10 Mbps", "mirBwUl": "10 Mbps", "mediaType": "VIDEO"},
+    "QOS_E": {"marBwDl": "10 Mbps", "marBwUl": "10 Mbps", "mirBwDl": "10 Mbps", "mirBwUl": "10 Mbps", "mediaType": "VIDEO"},
     "QOS_L": {"marBwDl": "50 Mbps", "marBwUl": "50 Mbps", "mirBwDl": "45 Mbps", "mirBwUl": "45 Mbps", "mediaType": "AUDIO"},
-    "QOS_M": {"marBwDl": "8 Mbps", "marBwUl": "8 Mbps", "mirBwDl": "10 Mbps", "mirBwUl": "10 Mbps", "mediaType": "VIDEO"},
-    "QOS_S": {"marBwDl": "4 Mbps", "marBwUl": "4 Mbps", "mirBwDl": "10 Mbps", "mirBwUl": "10 Mbps", "mediaType": "VIDEO"},
+    "QOS_M": {"marBwDl": "10 Mbps", "marBwUl": "3 Mbps", "mirBwDl": "9 Mbps", "mirBwUl": "2 Mbps", "mediaType": "VIDEO"},
+    "QOS_S": {"marBwDl": "10 Mbps", "marBwUl": "10 Mbps", "mirBwDl": "4 Mbps", "mirBwUl": "4 Mbps", "mediaType": "VIDEO"},
     
     
 })))

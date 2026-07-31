@@ -54,7 +54,7 @@ async def create_app_session_context_to_PCF(initial_model: AsSessionWithQosSubsc
 
     # 
     # Convert model to dict
-    payload = app_session_context.model_dump(mode="json")
+    payload = app_session_context.model_dump(mode="json", exclude_none=True)
     # Pass dict to function (do NOT serialize here)
     session_id, status_code = pcf_post_request(payload)
 
