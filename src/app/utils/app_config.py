@@ -1,7 +1,7 @@
 import os
 import json
 
-NEF_BASE_URL = os.getenv("NEF_BASE_URL", "http://localhost:8585")
+NEF_BASE_URL = os.getenv("NEF_BASE_URL", "http://localhost:8001")
 PCF_BASE_URL = os.getenv("PCF_BASE_URL", "10.220.2.50")
 PCF_PORT = int(os.getenv("PCF_PORT", 8086))
 
