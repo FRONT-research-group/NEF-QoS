@@ -15,4 +15,4 @@ logger.info(f'PCF PORT: {PCF_PORT}')
 
 if __name__ == "__main__":
   import uvicorn
-  uvicorn.run(_app, host="0.0.0.0", port=8585)
+  uvicorn.run(_app, host="0.0.0.0", port=8001)

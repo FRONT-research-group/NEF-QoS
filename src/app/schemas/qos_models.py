@@ -214,12 +214,16 @@ class MediaComponent(BaseModel):
     medType: MediaType  # Indicates the media type of the service
     marBwUl: BitRate
     marBwDl: BitRate
+    mirBwUl: Optional[BitRate] = None
+    mirBwDl: Optional[BitRate] = None
 
 #TODO check if bitrate is like 90000000 or 90 Mbps in open5gs
 
-    @field_validator('marBwUl', 'marBwDl')
+    @field_validator('marBwUl', 'marBwDl', 'mirBwUl', 'mirBwDl')
     @classmethod
     def validate_bitrate(cls, v):
+        if v is None:
+            return v
         BITRATE_REGEX = re.compile(r'^\d+(\.\d+)? (bps|Kbps|Mbps|Gbps|Tbps)$')
         if not isinstance(v, str):
             raise TypeError('BitRate must be a string')
