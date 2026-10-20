@@ -8,11 +8,11 @@ from app.utils.app_config import NEF_BASE_URL,PCF_BASE_URL,PCF_PORT
 
 logger = get_app_logger()
 
-logger.info('*** NEF-AsSessionWithQos **')
+logger.info('*** NEF-AsSessionWithQos-GBR**')
 logger.info(f'NEF Base URL: {NEF_BASE_URL}')
 logger.info(f'PCF Base URL: {PCF_BASE_URL}')
 logger.info(f'PCF PORT: {PCF_PORT}')
 
 if __name__ == "__main__":
   import uvicorn
-  uvicorn.run(_app, host="0.0.0.0", port=8001)
+  uvicorn.run(_app, host="0.0.0.0", port=8585)
